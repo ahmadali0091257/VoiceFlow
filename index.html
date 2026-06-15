@@ -4,298 +4,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VoiceFlow AI - Open Source Voice Dictation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
-        /* ===== THEME VARIABLES ===== */
         :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #fafafa;
-            --bg-tertiary: #f5f5f5;
-            --bg-card: #ffffff;
-            --bg-nav: rgba(255, 255, 255, 0.98);
-            --bg-code: #f5f5f5;
-            --bg-kbd: #000000;
-            --text-primary: #1a1a1a;
-            --text-secondary: #666666;
-            --text-muted: #999999;
-            --text-code: #d63384;
-            --text-kbd: #ffffff;
-            --border-color: #e5e5e5;
-            --border-strong: #333333;
-            --accent-primary: #000000;
-            --accent-hover: #333333;
-            --accent-contrast: #ffffff;
-            --feature-icon-bg: #f0f0f0;
-            --step-number-bg: #000000;
-            --download-bg: #000000;
-            --download-box-bg: #1a1a1a;
-            --download-box-border: #333333;
-            --download-btn-bg: #ffffff;
-            --download-btn-text: #000000;
-            --download-btn-hover: #f0f0f0;
-            --badge-bg: #10b981;
-            --shadow: rgba(0, 0, 0, 0.05);
-            --gradient-1: #10b981;
-            --gradient-2: #3b82f6;
-            --gradient-3: #8b5cf6;
-            --gradient-4: #ec4899;
+            --accent: #10b981;
+            --accent-hover: #059669;
+            --accent-muted: rgba(16, 185, 129, 0.1);
+            --bg: #fafafa;
+            --bg-elevated: #ffffff;
+            --bg-subtle: #f5f5f5;
+            --bg-nav: rgba(250, 250, 250, 0.92);
+            --text: #171717;
+            --text-secondary: #525252;
+            --text-muted: #a3a3a3;
+            --border: #e5e5e5;
+            --border-subtle: #f0f0f0;
+            --shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+            --card-bg: #ffffff;
+            --kbd-bg: #171717;
+            --kbd-text: #fafafa;
+            --terminal-bg: #0d1117;
+            --terminal-border: #30363d;
+            --header-font: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+            --mono-font: 'Geist Mono', 'SF Mono', monospace;
         }
 
-        body.dark-mode {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #121212;
-            --bg-tertiary: #1a1a1a;
-            --bg-card: #161616;
-            --bg-nav: rgba(10, 10, 10, 0.98);
-            --bg-code: #1a1a1a;
-            --bg-kbd: #ffffff;
-            --text-primary: #f0f0f0;
-            --text-secondary: #a0a0a0;
-            --text-muted: #777777;
-            --text-code: #f472b6;
-            --text-kbd: #000000;
-            --border-color: #2a2a2a;
-            --border-strong: #444444;
-            --accent-primary: #ffffff;
-            --accent-hover: #dddddd;
-            --accent-contrast: #000000;
-            --feature-icon-bg: #222222;
-            --step-number-bg: #ffffff;
-            --download-bg: #ffffff;
-            --download-box-bg: #f5f5f5;
-            --download-box-border: #cccccc;
-            --download-btn-bg: #000000;
-            --download-btn-text: #ffffff;
-            --download-btn-hover: #333333;
-            --badge-bg: #10b981;
-            --shadow: rgba(255, 255, 255, 0.03);
+        body.dark {
+            --accent: #10b981;
+            --accent-hover: #34d399;
+            --accent-muted: rgba(16, 185, 129, 0.12);
+            --bg: #0a0a0a;
+            --bg-elevated: #141414;
+            --bg-subtle: #1a1a1a;
+            --bg-nav: rgba(10, 10, 10, 0.92);
+            --text: #f5f5f5;
+            --text-secondary: #a3a3a3;
+            --text-muted: #737373;
+            --border: #262626;
+            --border-subtle: #1f1f1f;
+            --shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            --card-bg: #141414;
+            --kbd-bg: #f5f5f5;
+            --kbd-text: #0a0a0a;
+            --terminal-bg: #0d1117;
+            --terminal-border: #30363d;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--header-font);
             line-height: 1.6;
-            color: var(--text-primary);
-            background: var(--bg-primary);
+            color: var(--text);
+            background: var(--bg);
             transition: background 0.3s ease, color 0.3s ease;
-            cursor: default;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* ===== SCROLL PROGRESS BAR ===== */
+        /* Scroll progress - subtle line */
         .scroll-progress {
             position: fixed;
             top: 0;
             left: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--gradient-1), var(--gradient-2), var(--gradient-3), var(--gradient-4));
-            background-size: 300% 100%;
-            animation: gradientShift 3s ease infinite;
+            height: 2px;
+            background: var(--accent);
             z-index: 9999;
             transition: width 0.1s ease;
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
         }
 
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        /* ===== NOISE TEXTURE OVERLAY ===== */
-        body::before {
-            content: '';
+        /* Glow cursor trail */
+        .glow-trail {
             position: fixed;
-            top: 0;
-            left: 0;
+            inset: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 1;
-            opacity: 0.03;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            z-index: 9997;
         }
 
-        /* ===== SPOTLIGHT CURSOR EFFECT ===== */
-        .spotlight {
-            position: fixed;
-            width: 500px;
-            height: 500px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 2;
-            transform: translate(-50%, -50%);
-            transition: opacity 0.3s ease;
-            mix-blend-mode: screen;
-        }
-
-        body.dark-mode .spotlight {
-            background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 70%);
-        }
-
-        /* ===== SCROLL REVEAL ANIMATIONS ===== */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
-        }
-
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .reveal-delay-1 { transition-delay: 0.1s; }
-        .reveal-delay-2 { transition-delay: 0.2s; }
-        .reveal-delay-3 { transition-delay: 0.3s; }
-        .reveal-delay-4 { transition-delay: 0.4s; }
-
-        /* ===== THEME TOGGLE ===== */
-        .theme-toggle {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-        }
-
-        .theme-toggle:hover {
-            transform: rotate(15deg) scale(1.05);
-            border-color: var(--accent-primary);
-        }
-
-        /* ===== COMMAND PALETTE (Cmd+K) ===== */
-        .cmdk-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
-            z-index: 9998;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease;
-        }
-
-        .cmdk-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .cmdk-dialog {
-            position: fixed;
-            top: 20%;
-            left: 50%;
-            transform: translateX(-50%) scale(0.95);
-            width: 90%;
-            max-width: 550px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            z-index: 9999;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.2s cubic-bezier(0.5, 0, 0, 1);
-            overflow: hidden;
-        }
-
-        .cmdk-dialog.active {
-            opacity: 1;
-            pointer-events: all;
-            transform: translateX(-50%) scale(1);
-        }
-
-        .cmdk-input {
-            width: 100%;
-            padding: 1.25rem 1.5rem;
-            background: transparent;
-            border: none;
-            outline: none;
-            font-size: 1rem;
-            color: var(--text-primary);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .cmdk-list {
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 0.5rem;
-        }
-
-        .cmdk-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            color: var(--text-primary);
-            transition: background 0.15s ease;
-        }
-
-        .cmdk-item:hover,
-        .cmdk-item.selected {
-            background: var(--bg-tertiary);
-        }
-
-        .cmdk-item-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--feature-icon-bg);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .cmdk-item-text {
-            flex: 1;
-        }
-
-        .cmdk-item-title {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .cmdk-item-desc {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        .cmdk-shortcut {
-            font-size: 0.75rem;
-            padding: 0.2rem 0.5rem;
-            background: var(--bg-tertiary);
-            border-radius: 4px;
-            color: var(--text-secondary);
-        }
-
-        .cmdk-hint {
-            padding: 0.75rem 1.5rem;
-            background: var(--bg-tertiary);
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-align: center;
-            border-top: 1px solid var(--border-color);
-        }
-
-        /* Navigation */
+        /* Nav */
         nav {
             position: fixed;
-            top: 3px;
+            top: 2px;
             width: 100%;
             background: var(--bg-nav);
-            border-bottom: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
             z-index: 1000;
             padding: 1rem 0;
             transition: background 0.3s ease, border-color 0.3s ease;
@@ -311,14 +112,16 @@
         }
 
         .logo {
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             font-weight: 700;
-            color: var(--text-primary);
+            color: var(--text);
             text-decoration: none;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
+
+        .logo i { color: var(--accent); font-size: 1.25rem; }
 
         .nav-links {
             display: flex;
@@ -329,69 +132,190 @@
         .nav-links a {
             text-decoration: none;
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 0.875rem;
             font-weight: 500;
             transition: color 0.2s;
         }
 
-        .nav-links a:hover {
-            color: var(--text-primary);
-        }
+        .nav-links a:hover { color: var(--text); }
 
-        .cmdk-btn {
+        /* Premium theme toggle pill */
+        .theme-toggle {
+            position: relative;
+            width: 52px;
+            height: 28px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: var(--bg-subtle);
+            cursor: pointer;
+            padding: 0;
+            transition: background 0.35s ease, border-color 0.35s ease;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.4rem 0.75rem;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s;
+            overflow: hidden;
         }
 
-        .cmdk-btn:hover {
-            border-color: var(--accent-primary);
-            color: var(--text-primary);
-        }
+        .theme-toggle:hover { border-color: var(--accent); }
 
-        .cmdk-btn kbd {
+        .theme-toggle .toggle-knob {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--accent);
+            left: 2px;
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
             font-size: 0.7rem;
-            padding: 0.15rem 0.4rem;
-            background: var(--bg-primary);
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 3px;
-            font-family: 'SF Mono', monospace;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
         }
+
+        body.dark .theme-toggle .toggle-knob {
+            left: 27px;
+        }
+
+        .theme-toggle .toggle-icon-sun,
+        .theme-toggle .toggle-icon-moon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            line-height: 1;
+        }
+
+        .theme-toggle .toggle-icon-sun { right: 7px; opacity: 1; }
+        .theme-toggle .toggle-icon-moon { left: 7px; opacity: 0; }
+
+        body.dark .theme-toggle .toggle-icon-sun { opacity: 0; }
+        body.dark .theme-toggle .toggle-icon-moon { opacity: 1; }
 
         .btn {
-            padding: 0.6rem 1.25rem;
-            border-radius: 6px;
+            padding: 0.55rem 1.15rem;
+            border-radius: 8px;
             text-decoration: none;
             font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
             display: inline-block;
             border: none;
             cursor: pointer;
+            font-family: var(--header-font);
         }
 
         .btn-primary {
-            background: var(--accent-primary);
-            color: var(--accent-contrast);
+            background: var(--accent);
+            color: #ffffff;
         }
 
-        .btn-primary:hover {
-            background: var(--accent-hover);
+        .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+        .btn-primary:active { transform: translateY(0); }
+
+        /* Command palette */
+        .cmdk-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            z-index: 9998;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
         }
 
-        /* Hero Section */
+        .cmdk-overlay.active { opacity: 1; pointer-events: all; }
+
+        .cmdk-dialog {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%) scale(0.95);
+            width: 90%;
+            max-width: 520px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+        }
+
+        .cmdk-dialog.active { opacity: 1; pointer-events: all; transform: translateX(-50%) scale(1); }
+        .cmdk-input {
+            width: 100%;
+            padding: 1.1rem 1.25rem;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 0.95rem;
+            color: var(--text);
+            border-bottom: 1px solid var(--border);
+            font-family: var(--header-font);
+        }
+        .cmdk-input::placeholder { color: var(--text-muted); }
+        .cmdk-list { max-height: 380px; overflow-y: auto; padding: 0.4rem; }
+        .cmdk-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.65rem 0.85rem;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text);
+            transition: background 0.12s ease;
+        }
+        .cmdk-item:hover, .cmdk-item.selected { background: var(--bg-subtle); }
+        .cmdk-item-icon {
+            width: 30px;
+            height: 30px;
+            background: var(--accent-muted);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+        .cmdk-item-text { flex: 1; }
+        .cmdk-item-title { font-weight: 600; font-size: 0.875rem; }
+        .cmdk-item-desc { font-size: 0.8rem; color: var(--text-secondary); }
+        .cmdk-shortcut {
+            font-size: 0.75rem;
+            padding: 0.15rem 0.4rem;
+            background: var(--bg-subtle);
+            border-radius: 4px;
+            color: var(--text-muted);
+            font-family: var(--mono-font);
+        }
+        .cmdk-hint {
+            padding: 0.65rem 1.25rem;
+            background: var(--bg-subtle);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+        .cmdk-hint kbd {
+            font-family: var(--mono-font);
+            background: var(--kbd-bg);
+            color: var(--kbd-text);
+            padding: 0.1rem 0.35rem;
+            border-radius: 3px;
+            font-size: 0.7rem;
+        }
+
+        /* Hero */
         .hero {
             margin-top: 80px;
-            padding: 6rem 2rem;
+            padding: 4rem 2rem 6rem;
             max-width: 1100px;
             margin-left: auto;
             margin-right: auto;
@@ -404,205 +328,88 @@
         }
 
         .hero-content h1 {
-            font-size: 3rem;
+            font-size: clamp(2.25rem, 4vw, 3.25rem);
             font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            letter-spacing: -0.02em;
-            color: var(--text-primary);
+            line-height: 1.12;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.025em;
+            color: var(--text);
         }
 
-        /* Gradient Text Effect */
-        .gradient-text {
-            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2), var(--gradient-3));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            background-size: 200% 200%;
-            animation: gradientMove 4s ease infinite;
-        }
-
-        @keyframes gradientMove {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+        .hero-content .accent-word {
+            color: var(--accent);
         }
 
         .hero-content p {
-            font-size: 1.125rem;
+            font-size: 1.05rem;
             color: var(--text-secondary);
             margin-bottom: 2rem;
-            line-height: 1.7;
+            line-height: 1.65;
+            max-width: 44ch;
         }
 
         .hero-image {
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 11;
         }
 
         .hero-image img {
-            max-width: 100%;
-            height: auto;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
             border-radius: 12px;
-        }
-
-        /* ===== BENTO GRID FEATURES ===== */
-        .features {
-            padding: 6rem 2rem;
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
-            position: relative;
-            z-index: 3;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .section-header {
-            margin-bottom: 3rem;
-        }
-
-        .section-header h2 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-            color: var(--text-primary);
-        }
-
-        .section-header p {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-        }
-
-        /* Bento Grid Layout */
-        .bento-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: auto auto;
-            gap: 1.25rem;
-        }
-
-        .bento-card {
-            background: var(--bg-card);
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            padding: 2rem;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s ease;
-        }
-
-        .bento-card:hover {
-            transform: translateY(-4px);
-        }
-
-        /* Animated Gradient Border */
-        .bento-card.gradient-border::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            padding: 2px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2), var(--gradient-3), var(--gradient-4));
-            background-size: 300% 300%;
-            animation: borderRotate 4s linear infinite;
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            pointer-events: none;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.5s ease;
         }
 
-        .bento-card.gradient-border:hover::before {
+        .hero-image img.loaded {
             opacity: 1;
         }
 
-        @keyframes borderRotate {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Bento Grid Sizes */
-        .bento-large {
-            grid-column: span 2;
-            grid-row: span 2;
-        }
-
-        .bento-wide {
-            grid-column: span 2;
-        }
-
-        .bento-tall {
-            grid-row: span 2;
-        }
-
-        .bento-icon {
-            width: 50px;
-            height: 50px;
-            background: var(--feature-icon-bg);
+        .hero-image-skeleton {
+            position: absolute;
+            inset: 0;
             border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
+            background: var(--bg-subtle);
+            overflow: hidden;
         }
 
-        .bento-card h3 {
-            font-size: 1.15rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
+        .hero-image-skeleton::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(128, 128, 128, 0.08) 25%,
+                rgba(128, 128, 128, 0.14) 50%,
+                rgba(128, 128, 128, 0.08) 75%,
+                transparent 100%
+            );
+            animation: shimmer 1.8s ease-in-out infinite;
+            background-size: 200% 100%;
         }
 
-        .bento-card p {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            line-height: 1.6;
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
 
-        .bento-card .big-number {
-            font-size: 4rem;
-            font-weight: 800;
-            line-height: 1;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .hero-image-skeleton.hidden {
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
         }
 
-        .bento-card .visual {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background: var(--bg-tertiary);
-            border-radius: 8px;
-            font-family: 'SF Mono', monospace;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        .bento-card .shortcut-demo {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-            align-items: center;
-        }
-
-        .bento-card .shortcut-demo kbd {
-            font-size: 1rem;
-            padding: 0.5rem 1rem;
-        }
-
-        /* ===== ANIMATED COUNTERS ===== */
+        /* Stats section */
         .stats-section {
-            padding: 5rem 2rem;
-            background: var(--bg-primary);
-            border-top: 1px solid var(--border-color);
+            padding: 4rem 2rem;
+            background: var(--bg);
+            border-top: 1px solid var(--border);
             position: relative;
             z-index: 3;
         }
@@ -616,210 +423,401 @@
             text-align: center;
         }
 
-        .stat-block {
-            padding: 1.5rem;
-        }
-
+        .stat-block { padding: 1.25rem; }
         .stat-number {
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 800;
             line-height: 1;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-3));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            margin-bottom: 0.4rem;
+            color: var(--accent);
+            font-family: var(--mono-font);
         }
-
         .stat-label {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: var(--text-secondary);
             font-weight: 500;
         }
 
-        /* ===== AUTO-TYPING TERMINAL ===== */
-        .how-to-use {
+        /* Features */
+        .features {
             padding: 6rem 2rem;
+            background: var(--bg-subtle);
+            border-top: 1px solid var(--border);
             position: relative;
             z-index: 3;
         }
 
-        .terminal-window {
-            background: #0d1117;
-            border-radius: 12px;
-            overflow: hidden;
-            max-width: 700px;
-            margin: 3rem auto 0;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            border: 1px solid #30363d;
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        .section-header { margin-bottom: 3rem; }
+        .section-header h2 {
+            font-size: 1.85rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: var(--text);
+            letter-spacing: -0.015em;
+        }
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
         }
 
-        .terminal-header {
-            background: #161b22;
-            padding: 0.75rem 1rem;
+        /* Bento Grid */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: auto;
+            gap: 1rem;
+        }
+
+        .bento-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            padding: 1.75rem;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.25s ease, transform 0.25s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bento-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .bento-card.accent-tint { background: var(--accent-muted); border-color: transparent; }
+        .bento-card.accent-tint:hover { border-color: var(--accent); }
+
+        .bento-large { grid-column: span 2; grid-row: span 2; }
+        .bento-wide { grid-column: span 2; }
+        .bento-tall { grid-row: span 2; }
+
+        .bento-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-muted);
+            border-radius: 10px;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            border-bottom: 1px solid #30363d;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--accent);
+            margin-bottom: 0.85rem;
         }
 
-        .terminal-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
+        .bento-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            color: var(--text);
+            letter-spacing: -0.01em;
         }
 
-        .terminal-dot.red { background: #ff5f56; }
-        .terminal-dot.yellow { background: #ffbd2e; }
-        .terminal-dot.green { background: #27c93f; }
-
-        .terminal-title {
-            margin-left: 1rem;
-            font-size: 0.8rem;
-            color: #8b949e;
-            font-family: 'SF Mono', monospace;
+        .bento-card p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
         }
 
-        .terminal-body {
-            padding: 1.5rem;
-            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+        .bento-card .big-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1;
+            margin: 0.75rem 0 0.25rem;
+            color: var(--accent);
+            font-family: var(--mono-font);
+        }
+
+        .bento-card .big-number-label {
             font-size: 0.85rem;
-            color: #c9d1d9;
-            line-height: 1.8;
-            min-height: 250px;
+            color: var(--text-secondary);
         }
 
-        .terminal-line {
-            margin-bottom: 0.25rem;
-            opacity: 0;
-            animation: terminalFade 0.3s ease forwards;
-        }
-
-        @keyframes terminalFade {
-            to { opacity: 1; }
-        }
-
-        .terminal-prompt {
-            color: #7ee787;
-        }
-
-        .terminal-command {
-            color: #c9d1d9;
-        }
-
-        .terminal-success {
-            color: #7ee787;
-        }
-
-        .terminal-comment {
-            color: #8b949e;
-        }
-
-        .terminal-cursor {
-            display: inline-block;
-            width: 8px;
-            height: 1em;
-            background: #7ee787;
-            vertical-align: middle;
-            animation: terminalBlink 1s infinite;
-        }
-
-        @keyframes terminalBlink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
+        .bento-card .visual {
+            margin-top: auto;
+            padding: 0.75rem 0.85rem;
+            background: var(--bg-subtle);
+            border-radius: 8px;
+            font-family: var(--mono-font);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
         }
 
         .syntax-keyword { color: #ff7b72; }
         .syntax-string { color: #a5d6ff; }
-        .syntax-flag { color: #79c0ff; }
+        .syntax-comment { color: #8b949e; }
 
-        /* ===== SPEED RACE (keeping previous) ===== */
-        .speed-race {
+        .bento-card .app-list {
+            margin-top: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+        }
+
+        .app-tag {
+            padding: 0.25rem 0.6rem;
+            background: var(--bg-subtle);
+            border-radius: 5px;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            font-family: var(--mono-font);
+        }
+
+        .bento-card .kbd-demo {
+            display: flex;
+            gap: 0.35rem;
+            margin-top: 0.75rem;
+            align-items: center;
+        }
+
+        kbd {
+            background: var(--kbd-bg);
+            color: var(--kbd-text);
+            padding: 0.35rem 0.65rem;
+            border-radius: 5px;
+            font-family: var(--mono-font);
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0;
+        }
+
+        /* Video Showcase */
+        .video-showcase {
             padding: 6rem 2rem;
-            background: var(--bg-primary);
-            border-top: 1px solid var(--border-color);
+            background: var(--bg);
+            border-top: 1px solid var(--border);
             position: relative;
             z-index: 3;
         }
 
-        .race-container {
+        .video-player-wrapper {
             max-width: 900px;
             margin: 3rem auto 0;
         }
 
+        .video-player {
+            position: relative;
+            border-radius: 14px;
+            overflow: hidden;
+            background: #0a0a0a;
+            box-shadow: 0 0 0 1px var(--border), 0 20px 60px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            line-height: 0;
+        }
+
+        .video-player video {
+            width: 100%;
+            display: block;
+            border-radius: 14px;
+        }
+
+        .video-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            transition: opacity 0.35s ease, background 0.35s ease;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .video-player.playing .video-overlay { opacity: 0; }
+        .video-player:hover .video-overlay { background: rgba(0, 0, 0, 0.45); }
+
+        .video-play-btn {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: none;
+            color: #fff;
+            font-size: 1.75rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: all;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 24px rgba(16, 185, 129, 0.4);
+        }
+
+        .video-play-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 6px 32px rgba(16, 185, 129, 0.55);
+        }
+
+        .video-play-btn:active { transform: scale(0.96); }
+
+        .video-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all 0.35s ease;
+            z-index: 3;
+        }
+
+        .video-player:hover .video-controls,
+        .video-player.playing .video-controls {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .video-ctrl-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .video-ctrl-btn:hover { background: rgba(255, 255, 255, 0.22); }
+
+        .video-progress-track {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+            transition: height 0.15s;
+        }
+
+        .video-progress-track:hover { height: 6px; }
+
+        .video-progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .video-progress-thumb {
+            position: absolute;
+            top: 50%;
+            left: 0%;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #fff;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.2s, left 0.1s linear;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-progress-track:hover .video-progress-thumb { opacity: 1; }
+
+        .video-time {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 0.75rem;
+            font-family: var(--mono-font);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        /* Speed Race */
+        .speed-race {
+            padding: 6rem 2rem;
+            background: var(--bg);
+            border-top: 1px solid var(--border);
+            position: relative;
+            z-index: 3;
+        }
+
+        .race-container { max-width: 900px; margin: 3rem auto 0; }
         .race-start {
             display: block;
             margin: 0 auto 2.5rem;
-            padding: 1rem 2.5rem;
-            background: var(--accent-primary);
-            color: var(--accent-contrast);
+            padding: 0.85rem 2.25rem;
+            background: var(--accent);
+            color: #ffffff;
             border: none;
             border-radius: 8px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 14px var(--shadow);
+            transition: all 0.2s ease;
+            font-family: var(--header-font);
         }
-
-        .race-start:hover {
-            transform: translateY(-2px);
-        }
+        .race-start:hover { transform: translateY(-1px); background: var(--accent-hover); }
+        .race-start:active { transform: translateY(0); }
+        .race-start:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
         .race-lanes {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
+            gap: 1.25rem;
             margin-bottom: 2rem;
         }
 
         .race-lane {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
             padding: 1.5rem;
             position: relative;
             min-height: 200px;
         }
 
-        .race-lane.voice {
-            border-color: #10b981;
-            border-width: 2px;
-        }
+        .race-lane.voice { border-color: var(--accent); }
 
         .race-lane-header {
             display: flex;
             justify-content: space-between;
             margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.65rem;
+            border-bottom: 1px solid var(--border);
         }
+        .race-lane-header i { color: var(--accent); }
 
         .race-lane-title {
             font-weight: 700;
-            font-size: 1rem;
-            color: var(--text-primary);
+            font-size: 0.95rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
         }
-
         .race-lane-speed {
             font-size: 0.85rem;
             color: var(--text-muted);
             font-weight: 600;
+            font-family: var(--mono-font);
         }
-
         .race-text {
-            font-family: 'SF Mono', monospace;
-            font-size: 0.9rem;
-            color: var(--text-primary);
-            line-height: 1.8;
+            font-family: var(--mono-font);
+            font-size: 0.875rem;
+            color: var(--text);
+            line-height: 1.75;
             min-height: 100px;
         }
-
         .race-text .cursor {
             display: inline-block;
             width: 2px;
             height: 1em;
-            background: var(--accent-primary);
+            background: var(--accent);
             vertical-align: middle;
             animation: blink 1s infinite;
         }
@@ -830,345 +828,387 @@
         }
 
         .race-progress {
-            height: 6px;
-            background: var(--bg-tertiary);
-            border-radius: 3px;
+            height: 4px;
+            background: var(--bg-subtle);
+            border-radius: 2px;
             margin-top: 1rem;
             overflow: hidden;
         }
-
         .race-progress-bar {
             height: 100%;
-            background: var(--accent-primary);
-            border-radius: 3px;
+            background: var(--accent);
+            border-radius: 2px;
             width: 0%;
             transition: width 0.1s linear;
         }
-
-        .race-lane.voice .race-progress-bar {
-            background: #10b981;
-        }
+        .race-lane.voice .race-progress-bar { background: #10b981; }
+        .race-lane.typing .race-progress-bar { background: var(--text-muted); }
 
         .race-stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
             padding: 1.5rem;
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
+            background: var(--bg-subtle);
+            border-radius: 10px;
+            border: 1px solid var(--border);
             opacity: 0;
             transition: opacity 0.5s ease;
         }
-
         .race-stats.visible { opacity: 1; }
-
         .stat-item { text-align: center; }
-
         .stat-value {
-            font-size: 2rem;
+            font-size: 1.75rem;
             font-weight: 800;
-            color: #10b981;
-            margin-bottom: 0.25rem;
+            color: var(--accent);
+            margin-bottom: 0.2rem;
+            font-family: var(--mono-font);
         }
-
-        .stat-label {
-            font-size: 0.85rem;
+        .stat-desc {
+            font-size: 0.8rem;
             color: var(--text-secondary);
             font-weight: 500;
         }
 
-        /* ===== PRIVACY FLOW ===== */
+        /* Privacy Flow */
         .privacy-flow {
             padding: 6rem 2rem;
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
+            background: var(--bg-subtle);
+            border-top: 1px solid var(--border);
             position: relative;
             z-index: 3;
         }
-
-        .flow-container {
-            max-width: 1000px;
-            margin: 4rem auto 0;
-        }
-
+        .flow-container { max-width: 1000px; margin: 4rem auto 0; }
         .flow-diagram {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 2rem;
             position: relative;
         }
-
         .flow-node {
-            background: var(--bg-card);
-            border: 2px solid var(--border-color);
-            border-radius: 16px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
             padding: 2rem 1.5rem;
             text-align: center;
             transition: all 0.3s ease;
         }
-
         .flow-node:hover {
-            transform: translateY(-4px);
-            border-color: #10b981;
+            transform: translateY(-3px);
+            border-color: var(--accent);
         }
-
         .flow-node-icon {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, #10b981, #059669);
+            width: 56px;
+            height: 56px;
+            background: var(--accent-muted);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            margin: 0 auto 1.25rem;
-            color: white;
+            font-size: 1.4rem;
+            margin: 0 auto 1rem;
+            color: var(--accent);
         }
-
-        .flow-node:nth-child(2) .flow-node-icon {
-            background: linear-gradient(135deg, #3b82f6, #1e40af);
-        }
-
         .flow-node h3 {
-            font-size: 1.15rem;
+            font-size: 1.05rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
+            margin-bottom: 0.4rem;
+            color: var(--text);
         }
-
         .flow-node p {
-            font-size: 0.9rem;
+            font-size: 0.875rem;
             color: var(--text-secondary);
         }
-
         .flow-node-badge {
             display: none;
-            margin-top: 1rem;
-            padding: 0.4rem 0.8rem;
-            background: rgba(16, 185, 129, 0.1);
-            color: #10b981;
+            margin-top: 0.85rem;
+            padding: 0.3rem 0.65rem;
+            background: var(--accent-muted);
+            color: var(--accent);
             border-radius: 20px;
             font-size: 0.75rem;
             font-weight: 700;
-            border: 1px solid #10b981;
         }
-
-        .flow-node:hover .flow-node-badge {
-            display: inline-block;
-        }
+        .flow-node:hover .flow-node-badge { display: inline-block; }
 
         .flow-trust-message {
             text-align: center;
             margin-top: 3rem;
             padding: 1.5rem;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid #10b981;
-            border-radius: 12px;
+            background: var(--accent-muted);
+            border: 1px solid var(--accent);
+            border-radius: 10px;
             max-width: 700px;
             margin-left: auto;
             margin-right: auto;
         }
+        .flow-trust-message .highlight { color: var(--accent); font-weight: 800; }
 
-        .flow-trust-message .highlight {
-            color: #10b981;
-            font-weight: 800;
-        }
-
-        /* Usage */
-        .usage {
-            padding: 4rem 2rem;
-            background: var(--bg-tertiary);
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
+        /* Terminal */
+        .how-to-use {
+            padding: 6rem 2rem;
             position: relative;
             z-index: 3;
         }
+        .terminal-window {
+            background: var(--terminal-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            max-width: 680px;
+            margin: 3rem auto 0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--terminal-border);
+        }
+        .terminal-header {
+            background: #161b22;
+            padding: 0.65rem 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--terminal-border);
+        }
+        .terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .terminal-dot.red { background: #ff5f56; }
+        .terminal-dot.yellow { background: #ffbd2e; }
+        .terminal-dot.green { background: #27c93f; }
+        .terminal-title {
+            margin-left: 0.85rem;
+            font-size: 0.78rem;
+            color: #8b949e;
+            font-family: var(--mono-font);
+        }
+        .terminal-body {
+            padding: 1.5rem;
+            font-family: var(--mono-font);
+            font-size: 0.825rem;
+            color: #c9d1d9;
+            line-height: 1.8;
+            min-height: 240px;
+        }
+        .terminal-line {
+            margin-bottom: 0.2rem;
+            opacity: 0;
+            animation: terminalFade 0.3s ease forwards;
+        }
+        @keyframes terminalFade { to { opacity: 1; } }
+        .terminal-prompt { color: #7ee787; }
+        .terminal-command { color: #c9d1d9; }
+        .terminal-success { color: #7ee787; }
+        .terminal-comment { color: #8b949e; }
+        .terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1em;
+            background: #7ee787;
+            vertical-align: middle;
+            animation: terminalBlink 1s infinite;
+        }
+        @keyframes terminalBlink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        .syntax-flag { color: #79c0ff; }
 
-        .usage-box { max-width: 800px; margin: 0 auto; }
-
+        /* Usage */
+        .usage {
+            padding: 5rem 2rem;
+            background: var(--bg-subtle);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            z-index: 3;
+        }
+        .usage-box { max-width: 780px; margin: 0 auto; }
         .usage-box h3 {
-            font-size: 1.5rem;
+            font-size: 1.35rem;
             font-weight: 700;
             margin-bottom: 2rem;
             text-align: center;
-            color: var(--text-primary);
+            color: var(--text);
         }
-
         .usage-step {
-            background: var(--bg-card);
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 0.75rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
             display: flex;
             align-items: center;
-            gap: 1.5rem;
-            color: var(--text-primary);
+            gap: 1.25rem;
+            color: var(--text);
+            transition: border-color 0.2s ease;
         }
-
-        .usage-step strong {
+        .usage-step:hover { border-color: var(--accent); }
+        .usage-step-verb {
+            font-weight: 700;
             min-width: 80px;
-            font-weight: 600;
+            color: var(--accent);
+            font-size: 0.9rem;
+            font-family: var(--mono-font);
         }
+        .usage-step span { font-size: 0.925rem; color: var(--text-secondary); }
 
-        kbd {
-            background: var(--bg-kbd);
-            color: var(--text-kbd);
-            padding: 0.3rem 0.7rem;
-            border-radius: 4px;
-            font-family: 'SF Mono', monospace;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        /* API Section */
+        /* API section */
         .api-section {
             padding: 6rem 2rem;
             position: relative;
             z-index: 3;
         }
-
         .api-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 2rem;
+            gap: 1.5rem;
             margin-top: 3rem;
         }
-
         .api-card {
-            padding: 2.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+            padding: 2.25rem;
+            border: 1px solid var(--border);
+            border-radius: 10px;
             text-align: center;
-            background: var(--bg-card);
+            background: var(--card-bg);
+            transition: border-color 0.25s ease;
         }
-
+        .api-card:hover { border-color: var(--accent); }
+        .api-card i { font-size: 2rem; color: var(--accent); }
         .api-card h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin: 1rem 0 0.5rem;
-            color: var(--text-primary);
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin: 0.75rem 0 0.4rem;
+            color: var(--text);
         }
-
         .api-card p {
             color: var(--text-secondary);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
-
         .badge {
             display: inline-block;
-            padding: 0.25rem 0.75rem;
-            background: var(--badge-bg);
-            color: #fff;
+            padding: 0.2rem 0.65rem;
+            background: var(--accent-muted);
+            color: var(--accent);
             border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-top: 0.75rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            margin-top: 0.6rem;
         }
 
         /* Download */
         .download {
             padding: 6rem 2rem;
-            background: var(--download-bg);
-            color: var(--accent-contrast);
+            background: var(--bg-elevated);
+            color: var(--text);
             text-align: center;
             position: relative;
             z-index: 3;
+            border-top: 1px solid var(--border);
         }
-
         .download h2 {
-            font-size: 2.5rem;
+            font-size: 2.25rem;
             font-weight: 800;
-            margin-bottom: 1rem;
-            color: var(--accent-contrast);
+            margin-bottom: 0.75rem;
         }
-
         .download > p {
-            font-size: 1.125rem;
-            color: var(--text-muted);
-            margin-bottom: 3rem;
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
         }
-
         .download-box {
-            max-width: 600px;
+            max-width: 560px;
             margin: 0 auto;
-            padding: 3rem;
-            background: var(--download-box-bg);
-            border-radius: 12px;
-            border: 1px solid var(--download-box-border);
+            padding: 2.5rem;
+            background: var(--bg-subtle);
+            border-radius: 10px;
+            border: 1px solid var(--border);
         }
-
         .download-box h3 {
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
+            font-size: 1.15rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
         }
-
         .download-box p {
-            color: var(--text-muted);
-            margin-bottom: 2rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            font-size: 0.925rem;
         }
-
         .download-btn {
             display: inline-block;
-            background: var(--download-btn-bg);
-            color: var(--download-btn-text);
-            padding: 1rem 2rem;
-            border-radius: 6px;
+            background: var(--accent);
+            color: #ffffff;
+            padding: 0.85rem 1.75rem;
+            border-radius: 8px;
             text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
         }
-
-        .download-btn:hover {
-            background: var(--download-btn-hover);
-        }
-
+        .download-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
         .download-features {
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--download-box-border);
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
             display: flex;
             justify-content: center;
-            gap: 2rem;
-            font-size: 0.875rem;
+            gap: 1.5rem;
+            font-size: 0.825rem;
             color: var(--text-muted);
+            flex-wrap: wrap;
         }
 
+        /* Footer */
         footer {
             padding: 3rem 2rem;
             text-align: center;
-            border-top: 1px solid var(--border-color);
+            border-top: 1px solid var(--border);
             color: var(--text-secondary);
-            font-size: 0.9rem;
-            background: var(--bg-primary);
+            font-size: 0.85rem;
+            background: var(--bg);
             position: relative;
             z-index: 3;
         }
 
-        /* Responsive */
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.08s; }
+        .reveal-delay-2 { transition-delay: 0.16s; }
+        .reveal-delay-3 { transition-delay: 0.24s; }
+        .reveal-delay-4 { transition-delay: 0.32s; }
+
         @media (max-width: 768px) {
-            .hero { grid-template-columns: 1fr; }
-            .hero-content h1 { font-size: 2.25rem; }
+            .hero { grid-template-columns: 1fr; gap: 2.5rem; padding: 3rem 1.5rem 4rem; }
+            .hero-content h1 { font-size: 2rem; }
+            .hero-content p { font-size: 0.95rem; }
             .nav-links { display: none; }
             .bento-grid { grid-template-columns: 1fr; }
             .bento-large, .bento-wide, .bento-tall { grid-column: span 1; grid-row: span 1; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             .race-lanes, .flow-diagram { grid-template-columns: 1fr; }
             .race-stats { grid-template-columns: 1fr; }
-            .spotlight { display: none; }
+            .api-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+            .stat-number { font-size: 2.25rem; }
+            .download-features { flex-direction: column; gap: 0.5rem; text-align: center; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { opacity: 1; transform: none; transition: none; }
+            .scroll-progress { transition: none; }
+            * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Scroll Progress Bar -->
     <div class="scroll-progress" id="scrollProgress"></div>
 
-    <!-- Spotlight Cursor Effect -->
-    <div class="spotlight" id="spotlight"></div>
+    <!-- Glow Trail Canvas -->
+    <canvas class="glow-trail" id="glowTrail"></canvas>
 
     <!-- Command Palette -->
     <div class="cmdk-overlay" id="cmdkOverlay"></div>
@@ -1176,90 +1216,91 @@
         <input type="text" class="cmdk-input" id="cmdkInput" placeholder="Type a command or search..." autofocus>
         <div class="cmdk-list" id="cmdkList">
             <div class="cmdk-item" data-action="features">
-                <div class="cmdk-item-icon">⚡</div>
+                <div class="cmdk-item-icon"><i class="ti ti-bolt"></i></div>
                 <div class="cmdk-item-text">
                     <div class="cmdk-item-title">View Features</div>
                     <div class="cmdk-item-desc">Explore all VoiceFlow features</div>
                 </div>
-                <span class="cmdk-shortcut">↵</span>
+                <span class="cmdk-shortcut">Enter</span>
             </div>
             <div class="cmdk-item" data-action="download">
-                <div class="cmdk-item-icon">⬇️</div>
+                <div class="cmdk-item-icon"><i class="ti ti-download"></i></div>
                 <div class="cmdk-item-text">
-                    <div class="cmdk-item-title">Download Now</div>
+                    <div class="cmdk-item-title">Download</div>
                     <div class="cmdk-item-desc">Get VoiceFlow AI for Windows</div>
                 </div>
-                <span class="cmdk-shortcut">↵</span>
+                <span class="cmdk-shortcut">Enter</span>
             </div>
             <div class="cmdk-item" data-action="speed">
-                <div class="cmdk-item-icon">🏁</div>
+                <div class="cmdk-item-icon"><i class="ti ti-flag"></i></div>
                 <div class="cmdk-item-text">
-                    <div class="cmdk-item-title">Speed Race Demo</div>
+                    <div class="cmdk-item-title">Speed Race</div>
                     <div class="cmdk-item-desc">See typing vs dictation</div>
                 </div>
-                <span class="cmdk-shortcut">↵</span>
+                <span class="cmdk-shortcut">Enter</span>
             </div>
             <div class="cmdk-item" data-action="privacy">
-                <div class="cmdk-item-icon">🔒</div>
+                <div class="cmdk-item-icon"><i class="ti ti-shield"></i></div>
                 <div class="cmdk-item-text">
-                    <div class="cmdk-item-title">Privacy Flow</div>
+                    <div class="cmdk-item-title">Privacy</div>
                     <div class="cmdk-item-desc">Learn how your data is protected</div>
                 </div>
-                <span class="cmdk-shortcut">↵</span>
+                <span class="cmdk-shortcut">Enter</span>
             </div>
             <div class="cmdk-item" data-action="theme">
-                <div class="cmdk-item-icon">🌓</div>
+                <div class="cmdk-item-icon"><i class="ti ti-palette"></i></div>
                 <div class="cmdk-item-text">
                     <div class="cmdk-item-title">Toggle Theme</div>
                     <div class="cmdk-item-desc">Switch between light and dark mode</div>
                 </div>
-                <span class="cmdk-shortcut">⌘D</span>
+                <span class="cmdk-shortcut">Ctrl D</span>
             </div>
             <div class="cmdk-item" data-action="github">
-                <div class="cmdk-item-icon">💻</div>
+                <div class="cmdk-item-icon"><i class="ti ti-brand-github"></i></div>
                 <div class="cmdk-item-text">
                     <div class="cmdk-item-title">View on GitHub</div>
                     <div class="cmdk-item-desc">Star the repository</div>
                 </div>
-                <span class="cmdk-shortcut">↵</span>
+                <span class="cmdk-shortcut">Enter</span>
             </div>
         </div>
-        <div class="cmdk-hint">Press <kbd>Esc</kbd> to close · <kbd>↑↓</kbd> to navigate</div>
+        <div class="cmdk-hint">Press <kbd>Esc</kbd> to close, <kbd>&uarr;&darr;</kbd> to navigate</div>
     </div>
 
-    <!-- Navigation -->
     <nav>
         <div class="nav-container">
             <a href="#" class="logo">
-                <span>🎤</span>
+                <i class="ti ti-microphone"></i>
                 <span>VoiceFlow AI</span>
             </a>
             <div class="nav-links">
                 <a href="#features">Features</a>
                 <a href="#speed-race">Speed</a>
                 <a href="#privacy">Privacy</a>
-                <button class="cmdk-btn" id="cmdkTrigger">
-                    Search... <kbd>⌘K</kbd>
-                </button>
-                <button class="theme-toggle" id="themeToggle" title="Toggle theme">🌙</button>
                 <a href="#download" class="btn btn-primary">Download</a>
             </div>
+            <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+                <i class="ti ti-moon toggle-icon-moon"></i>
+                <i class="ti ti-sun toggle-icon-sun"></i>
+                <span class="toggle-knob"></span>
+            </button>
         </div>
     </nav>
 
     <!-- Hero -->
     <section class="hero">
         <div class="hero-content reveal">
-            <h1>Voice dictation that <span class="gradient-text">actually works</span></h1>
-            <p>An open-source tool that brings voice typing to any application on your computer. No subscriptions, no cloud dependencies—just speak and type.</p>
-            <a href="#download" class="btn btn-primary" style="padding: 0.8rem 1.5rem; font-size: 1rem;">Download for Windows</a>
+            <h1>Voice dictation that <span class="accent-word">works</span></h1>
+            <p>Open-source voice dictation for any desktop application. No subscriptions, no cloud dependencies. Just speak and type.</p>
+            <a href="#download" class="btn btn-primary" style="padding: 0.75rem 1.5rem; font-size: 0.95rem;">Download for Windows</a>
         </div>
         <div class="hero-image reveal reveal-delay-2">
-            <img src="https://i.ibb.co/d4JJD66X/1781436324.png" alt="VoiceFlow AI">
+            <div class="hero-image-skeleton" id="heroSkeleton"></div>
+            <img id="heroImg" src="https://i.ibb.co/d4JJD66X/1781436324.png" alt="VoiceFlow AI interface">
         </div>
     </section>
 
-    <!-- Stats Section with Counters -->
+    <!-- Stats -->
     <section class="stats-section">
         <div class="stats-grid">
             <div class="stat-block reveal">
@@ -1268,104 +1309,131 @@
             </div>
             <div class="stat-block reveal reveal-delay-1">
                 <div class="stat-number" data-target="150">0</div>
-                <div class="stat-label">Words Per Minute</div>
+                <div class="stat-label">Words per minute</div>
             </div>
             <div class="stat-block reveal reveal-delay-2">
-                <div class="stat-number" data-target="99">0</div>
-                <div class="stat-label">Accuracy Rate %</div>
+                <div class="stat-number" data-target="97">0</div>
+                <div class="stat-label">Accuracy rate</div>
             </div>
             <div class="stat-block reveal reveal-delay-3">
                 <div class="stat-number" data-target="0">0</div>
-                <div class="stat-label">Data Collected</div>
+                <div class="stat-label">Data collected</div>
             </div>
         </div>
     </section>
 
-    <!-- Bento Grid Features -->
+    <!-- Features Bento -->
     <section class="features" id="features">
         <div class="container">
             <div class="section-header reveal">
-                <h2>Why developers <span class="gradient-text">love</span> VoiceFlow</h2>
-                <p>Built for developers, designed for everyone.</p>
+                <h2>Built for speed and privacy</h2>
+                <p>Everything you need for voice dictation, nothing you don't.</p>
             </div>
             <div class="bento-grid">
-                <!-- Large Feature Card -->
-                <div class="bento-card bento-large gradient-border reveal">
-                    <div class="bento-icon">⚡</div>
-                    <h3>Real-time & Lightning Fast</h3>
-                    <p>Powered by Groq's inference engine. See your words appear as you speak, with zero lag.</p>
+                <div class="bento-card bento-large reveal">
+                    <div class="bento-icon"><i class="ti ti-bolt"></i></div>
+                    <h3>Real-time and fast</h3>
+                    <p>Powered by Groq's inference engine. See your words appear as you speak, with no perceptible lag.</p>
                     <div class="big-number" data-target="150">0</div>
-                    <div style="color: var(--text-secondary); font-size: 0.9rem;">Words per minute</div>
+                    <div class="big-number-label">Words per minute</div>
                     <div class="visual">
-                        <span class="syntax-comment">// Your voice → Text instantly</span><br>
+                        <span class="syntax-comment">// Your voice becomes text instantly</span><br>
                         <span class="syntax-keyword">await</span> <span class="syntax-string">transcribe</span>(<span class="syntax-string">audio</span>);
                     </div>
                 </div>
 
-                <!-- Wide Card -->
                 <div class="bento-card bento-wide reveal reveal-delay-1">
-                    <div class="bento-icon">⌘</div>
-                    <h3>Works Everywhere</h3>
-                    <p>Type with your voice in VS Code, Notepad, browsers—any app that accepts text input.</p>
-                    <div class="visual">VS Code · Notepad · Chrome · Slack · Discord · Figma</div>
-                </div>
-
-                <!-- Normal Card -->
-                <div class="bento-card gradient-border reveal reveal-delay-2">
-                    <div class="bento-icon">🔓</div>
-                    <h3>100% Open Source</h3>
-                    <p>Free forever. No telemetry, no paywalls.</p>
-                </div>
-
-                <!-- Normal Card -->
-                <div class="bento-card reveal reveal-delay-3">
-                    <div class="bento-icon">🎯</div>
-                    <h3>Simple Shortcuts</h3>
-                    <p>Hold, speak, release. Done.</p>
-                    <div class="shortcut-demo">
-                        <kbd>Ctrl</kbd>
-                        <span style="color: var(--text-muted);">+</span>
-                        <kbd>Win</kbd>
+                    <div class="bento-icon"><i class="ti ti-apps"></i></div>
+                    <h3>Works everywhere</h3>
+                    <p>Type with your voice in any application that accepts text input.</p>
+                    <div class="app-list">
+                        <span class="app-tag">VS Code</span><span class="app-tag">Notepad</span><span class="app-tag">Chrome</span>
+                        <span class="app-tag">Slack</span><span class="app-tag">Discord</span><span class="app-tag">Figma</span>
                     </div>
                 </div>
 
-                <!-- Wide Card -->
+                <div class="bento-card accent-tint reveal reveal-delay-2">
+                    <div class="bento-icon"><i class="ti ti-lock-open"></i></div>
+                    <h3>Open source</h3>
+                    <p>Free forever. No telemetry, no paywalls.</p>
+                </div>
+
+                <div class="bento-card reveal reveal-delay-3">
+                    <div class="bento-icon"><i class="ti ti-keyboard"></i></div>
+                    <h3>Simple shortcuts</h3>
+                    <p>Hold, speak, release. Done.</p>
+                    <div class="kbd-demo">
+                        <kbd>Ctrl</kbd><span style="color: var(--text-muted); margin: 0 0.15rem;">+</span><kbd>Win</kbd>
+                    </div>
+                </div>
+
                 <div class="bento-card bento-wide reveal">
-                    <div class="bento-icon">🤖</div>
-                    <h3>Dual AI Support</h3>
-                    <p>Use DeepSeek AI or Groq (free). Choose the backend that works best for you.</p>
+                    <div class="bento-icon"><i class="ti ti-cpu"></i></div>
+                    <h3>Dual AI backends</h3>
+                    <p>Use DeepSeek AI or Groq. Choose the backend that fits your needs. Groq is free.</p>
                 </div>
 
-                <!-- Normal Card -->
-                <div class="bento-card reveal reveal-delay-1">
-                    <div class="bento-icon">🔒</div>
-                    <h3>Privacy First</h3>
-                    <p>Runs locally. You control API keys. No data collection.</p>
+                <div class="bento-card accent-tint reveal reveal-delay-1">
+                    <div class="bento-icon"><i class="ti ti-shield"></i></div>
+                    <h3>Privacy first</h3>
+                    <p>Runs locally. You control your API keys.</p>
                 </div>
 
-                <!-- Normal Card -->
-                <div class="bento-card gradient-border reveal reveal-delay-2">
-                    <div class="bento-icon">🌍</div>
-                    <h3>Multi-Language</h3>
-                    <p>Support for 50+ languages including Urdu, Hindi, Arabic.</p>
+                <div class="bento-card reveal reveal-delay-2">
+                    <div class="bento-icon"><i class="ti ti-world"></i></div>
+                    <h3>Multi-language</h3>
+                    <p>Support for 50+ languages including Urdu, Hindi, and Arabic.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Speed Race Section -->
+    <!-- Premium Video Section -->
+    <section class="video-showcase" id="video-showcase">
+        <div class="container">
+            <div class="section-header reveal" style="text-align: center;">
+                <h2>See VoiceFlow in action</h2>
+                <p>Watch how voice dictation transforms your workflow in seconds.</p>
+            </div>
+            <div class="video-player-wrapper reveal reveal-delay-1">
+                <div class="video-player">
+                    <video id="demoVideo" src="https://res.cloudinary.com/djpvedxpo/video/upload/v1781550476/Project_Video_qpskhb.mp4" preload="metadata" playsinline></video>
+                    <div class="video-overlay" id="videoOverlay">
+                        <button class="video-play-btn" id="videoPlayBtn">
+                            <i class="ti ti-player-play-filled"></i>
+                        </button>
+                    </div>
+                    <div class="video-controls" id="videoControls">
+                        <button class="video-ctrl-btn" id="videoPlayPause">
+                            <i class="ti ti-player-play-filled"></i>
+                        </button>
+                        <div class="video-progress-track" id="videoProgressTrack">
+                            <div class="video-progress-fill" id="videoProgressFill"></div>
+                            <div class="video-progress-thumb" id="videoProgressThumb"></div>
+                        </div>
+                        <span class="video-time" id="videoTime">0:00 / 0:00</span>
+                        <button class="video-ctrl-btn" id="videoFullscreen">
+                            <i class="ti ti-arrows-maximize"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Speed Race -->
     <section class="speed-race" id="speed-race">
         <div class="container">
             <div class="section-header reveal" style="text-align: center;">
-                <h2>🏁 Typing vs Dictation Race</h2>
-                <p>See the difference for yourself. Click start and watch the magic.</p>
+                <h2>Typing vs. dictation</h2>
+                <p>See the difference. Click start and watch the comparison.</p>
             </div>
             <div class="race-container">
-                <button class="race-start reveal" id="raceStart">▶️ Start the Race</button>
+                <button class="race-start reveal" id="raceStart">Start the race</button>
                 <div class="race-lanes">
                     <div class="race-lane typing reveal reveal-delay-1">
                         <div class="race-lane-header">
-                            <span class="race-lane-title">⌨️ Average Typing</span>
+                            <span class="race-lane-title"><i class="ti ti-keyboard"></i> Average typing</span>
                             <span class="race-lane-speed">~40 WPM</span>
                         </div>
                         <div class="race-text" id="typingText"></div>
@@ -1375,8 +1443,8 @@
                     </div>
                     <div class="race-lane voice reveal reveal-delay-2">
                         <div class="race-lane-header">
-                            <span class="race-lane-title">🎤 VoiceFlow AI</span>
-                            <span class="race-lane-speed">~150+ WPM</span>
+                            <span class="race-lane-title"><i class="ti ti-microphone"></i> VoiceFlow AI</span>
+                            <span class="race-lane-speed">~150 WPM</span>
                         </div>
                         <div class="race-text" id="voiceText"></div>
                         <div class="race-progress">
@@ -1387,15 +1455,15 @@
                 <div class="race-stats" id="raceStats">
                     <div class="stat-item">
                         <div class="stat-value">3.75x</div>
-                        <div class="stat-label">Faster Speed</div>
+                        <div class="stat-desc">Faster</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-value">73%</div>
-                        <div class="stat-label">Time Saved</div>
+                        <div class="stat-desc">Time saved</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-value" id="statWords">0</div>
-                        <div class="stat-label">Words Dictated</div>
+                        <div class="stat-desc">Words dictated</div>
                     </div>
                 </div>
             </div>
@@ -1406,54 +1474,52 @@
     <section class="privacy-flow" id="privacy">
         <div class="container">
             <div class="section-header reveal" style="text-align: center;">
-                <h2>🔐 Your Privacy, Our Priority</h2>
-                <p>Hover over each step to see why your data stays yours.</p>
+                <h2>Your data stays yours</h2>
+                <p>Hover over each step to see how your privacy is protected.</p>
             </div>
             <div class="flow-container">
                 <div class="flow-diagram">
                     <div class="flow-node reveal">
-                        <div class="flow-node-icon">🎤</div>
-                        <h3>Your Microphone</h3>
+                        <div class="flow-node-icon"><i class="ti ti-microphone"></i></div>
+                        <h3>Your microphone</h3>
                         <p>Audio captured locally on your machine.</p>
-                        <span class="flow-node-badge">✅ 100% Local</span>
+                        <span class="flow-node-badge">100% local</span>
                     </div>
                     <div class="flow-node reveal reveal-delay-1">
-                        <div class="flow-node-icon">🔒</div>
-                        <h3>Encrypted Tunnel</h3>
-                        <p>Direct HTTPS connection. No middleman.</p>
-                        <span class="flow-node-badge">✅ AES-256</span>
+                        <div class="flow-node-icon"><i class="ti ti-lock"></i></div>
+                        <h3>Encrypted connection</h3>
+                        <p>Direct HTTPS. No middleman, no proxy.</p>
+                        <span class="flow-node-badge">AES-256</span>
                     </div>
                     <div class="flow-node reveal reveal-delay-2">
-                        <div class="flow-node-icon">📝</div>
-                        <h3>Your Text Returns</h3>
-                        <p>Only text comes back. No audio stored.</p>
-                        <span class="flow-node-badge">✅ Zero Retention</span>
+                        <div class="flow-node-icon"><i class="ti ti-file-text"></i></div>
+                        <h3>Text only returns</h3>
+                        <p>Only text comes back. No audio stored anywhere.</p>
+                        <span class="flow-node-badge">Zero retention</span>
                     </div>
                 </div>
                 <div class="flow-trust-message reveal">
-                    <p>🛡️ <span class="highlight">We don't have a database for your audio.</span> Your voice never touches our servers. Period.</p>
+                    <p><span class="highlight">We don't have a database for your audio.</span> Your voice never touches our servers.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Auto-Typing Terminal -->
+    <!-- Terminal -->
     <section class="how-to-use" id="how-to-use">
         <div class="container">
             <div class="section-header reveal">
-                <h2>Get up and running in <span class="gradient-text">under 5 minutes</span></h2>
-                <p>Simple installation. Powerful results.</p>
+                <h2>Get running in under 5 minutes</h2>
+                <p>Simple installation. Just clone, install, and launch.</p>
             </div>
             <div class="terminal-window reveal">
                 <div class="terminal-header">
                     <div class="terminal-dot red"></div>
                     <div class="terminal-dot yellow"></div>
                     <div class="terminal-dot green"></div>
-                    <div class="terminal-title">voiceflow — bash — 80x24</div>
+                    <div class="terminal-title">voiceflow -- bash -- 80x24</div>
                 </div>
-                <div class="terminal-body" id="terminalBody">
-                    <!-- Lines will be auto-typed -->
-                </div>
+                <div class="terminal-body" id="terminalBody"></div>
             </div>
         </div>
     </section>
@@ -1461,22 +1527,22 @@
     <!-- Usage -->
     <section class="usage" id="usage">
         <div class="usage-box">
-            <h3 class="reveal">How to Use</h3>
+            <h3 class="reveal">How to use</h3>
             <div class="usage-step reveal reveal-delay-1">
-                <strong>Step 1</strong>
-                <span>Open any application where you want to dictate text</span>
+                <span class="usage-step-verb">Open</span>
+                <span>Any application where you want to dictate text</span>
             </div>
             <div class="usage-step reveal reveal-delay-2">
-                <strong>Step 2</strong>
-                <span>Press and hold <kbd>Ctrl</kbd> + <kbd>Win</kbd></span>
+                <span class="usage-step-verb">Press</span>
+                <span>Hold <kbd>Ctrl</kbd> + <kbd>Win</kbd></span>
             </div>
             <div class="usage-step reveal reveal-delay-3">
-                <strong>Step 3</strong>
-                <span>Speak clearly. Your voice is converted to text in real-time.</span>
+                <span class="usage-step-verb">Speak</span>
+                <span>Your voice is converted to text in real-time</span>
             </div>
             <div class="usage-step reveal reveal-delay-4">
-                <strong>Step 4</strong>
-                <span>Release the keys when you're done. Text appears automatically.</span>
+                <span class="usage-step-verb">Release</span>
+                <span>Let go of the keys. Text appears where your cursor is.</span>
             </div>
         </div>
     </section>
@@ -1485,19 +1551,19 @@
     <section class="api-section">
         <div class="container">
             <div class="section-header reveal">
-                <h2>API Backends</h2>
-                <p>Choose your preferred AI provider.</p>
+                <h2>Choose your backend</h2>
+                <p>Two options. One goal: fast, accurate dictation.</p>
             </div>
             <div class="api-grid">
                 <div class="api-card reveal">
-                    <div style="font-size: 2.5rem;">🧠</div>
+                    <i class="ti ti-brain"></i>
                     <h3>DeepSeek AI</h3>
                     <p>High-accuracy transcription with advanced language understanding.</p>
                 </div>
                 <div class="api-card reveal reveal-delay-1">
-                    <div style="font-size: 2.5rem;">⚡</div>
+                    <i class="ti ti-bolt"></i>
                     <h3>Groq</h3>
-                    <span class="badge">FREE</span>
+                    <span class="badge">Free</span>
                     <p style="margin-top: 1rem;">Lightning-fast inference at no cost.</p>
                 </div>
             </div>
@@ -1509,54 +1575,127 @@
         <h2 class="reveal">Ready to start?</h2>
         <p class="reveal">Download VoiceFlow AI and start dictating today.</p>
         <div class="download-box reveal reveal-delay-1">
-            <h3>Download Project</h3>
+            <h3>Download project</h3>
             <p>Complete source code with setup instructions</p>
             <a href="https://drive.google.com/file/d/1Yl_fRZs-Rfs5iJbtYb532XbnHl5lFVIr/view" class="download-btn" target="_blank">Download from Google Drive</a>
             <div class="download-features">
-                <span>✓ Free & Open Source</span>
-                <span>✓ No Installation</span>
-                <span>✓ Windows Compatible</span>
+                <span>Open source</span>
+                <span>No installation required</span>
+                <span>Windows compatible</span>
             </div>
         </div>
     </section>
 
     <footer>
-        <p>&copy; 2026 VoiceFlow AI. Open source project.</p>
+        <p>VoiceFlow AI, 2026. Open source project.</p>
     </footer>
 
     <script>
-        // ===== SCROLL PROGRESS =====
+        // Scroll progress
         const scrollProgress = document.getElementById('scrollProgress');
         window.addEventListener('scroll', () => {
             const scrollTop = document.documentElement.scrollTop;
             const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             const progress = (scrollTop / scrollHeight) * 100;
             scrollProgress.style.width = progress + '%';
-        });
+        }, { passive: true });
 
-        // ===== SPOTLIGHT CURSOR =====
-        const spotlight = document.getElementById('spotlight');
-        document.addEventListener('mousemove', (e) => {
-            spotlight.style.left = e.clientX + 'px';
-            spotlight.style.top = e.clientY + 'px';
-        });
+        // Glow cursor trail
+        (function() {
+            const canvas = document.getElementById('glowTrail');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let mouseX = -100;
+            let mouseY = -100;
+            let prevX = -100;
+            let prevY = -100;
+            let raf;
 
-        // ===== THEME TOGGLE =====
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            document.addEventListener('mousemove', function(e) {
+                prevX = mouseX;
+                prevY = mouseY;
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                const dx = mouseX - prevX;
+                const dy = mouseY - prevY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const steps = Math.min(Math.floor(dist / 6), 6);
+                for (let i = 0; i < steps; i++) {
+                    const t = i / (steps || 1);
+                    particles.push({
+                        x: prevX + dx * t,
+                        y: prevY + dy * t,
+                        r: 4 + Math.random() * 4,
+                        life: 1,
+                        decay: 0.015 + Math.random() * 0.025
+                    });
+                }
+            }, { passive: true });
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const p = particles[i];
+                    p.life -= p.decay;
+                    if (p.life <= 0) {
+                        particles.splice(i, 1);
+                        continue;
+                    }
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(16, 185, 129, ' + (p.life * 0.18) + ')';
+                    ctx.fill();
+                }
+                if (particles.length > 180) particles.splice(0, particles.length - 180);
+                raf = requestAnimationFrame(animate);
+            }
+            animate();
+
+            document.addEventListener('mouseleave', function() {
+                particles = [];
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            });
+        })();
+
+        // Theme toggle
         const themeToggle = document.getElementById('themeToggle');
         const body = document.body;
         const savedTheme = localStorage.getItem('voiceflow-theme');
         if (savedTheme === 'dark') {
-            body.classList.add('dark-mode');
-            themeToggle.textContent = '☀️';
+            body.classList.add('dark');
         }
         themeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            const isDark = body.classList.contains('dark-mode');
-            themeToggle.textContent = isDark ? '☀️' : '🌙';
+            body.classList.toggle('dark');
+            const isDark = body.classList.contains('dark');
             localStorage.setItem('voiceflow-theme', isDark ? 'dark' : 'light');
         });
 
-        // ===== SMOOTH SCROLL =====
+        // Hero image lazy load with skeleton
+        const heroImg = document.getElementById('heroImg');
+        const heroSkeleton = document.getElementById('heroSkeleton');
+        if (heroImg && heroSkeleton) {
+            if (heroImg.complete) {
+                heroSkeleton.classList.add('hidden');
+                heroImg.classList.add('loaded');
+            } else {
+                heroImg.addEventListener('load', () => {
+                    heroSkeleton.classList.add('hidden');
+                    heroImg.classList.add('loaded');
+                });
+                heroImg.addEventListener('error', () => {
+                    heroSkeleton.classList.add('hidden');
+                });
+            }
+        }
+
+        // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -1566,12 +1705,11 @@
             });
         });
 
-        // ===== SCROLL REVEAL =====
+        // Scroll reveal
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
-                    // Trigger counter animation
                     if (entry.target.classList.contains('stat-block')) {
                         animateCounter(entry.target.querySelector('.stat-number'));
                     }
@@ -1581,7 +1719,7 @@
 
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        // ===== ANIMATED COUNTERS =====
+        // Animated counters
         function animateCounter(element) {
             if (!element || element.dataset.animated) return;
             element.dataset.animated = 'true';
@@ -1597,11 +1735,11 @@
                     current = target;
                     clearInterval(timer);
                 }
-                element.textContent = Math.floor(current).toLocaleString() + (target > 1000 ? '+' : target === 99 ? '%' : '');
+                element.textContent = Math.floor(current).toLocaleString() + (target > 1000 ? '+' : '');
             }, stepTime);
         }
 
-        // ===== AUTO-TYPING TERMINAL =====
+        // Terminal auto-type
         const terminalBody = document.getElementById('terminalBody');
         const terminalLines = [
             { type: 'comment', text: '# Clone VoiceFlow AI repository' },
@@ -1610,10 +1748,10 @@
             { type: 'command', text: '<span class="terminal-prompt">$</span> <span class="syntax-keyword">cd</span> ai' },
             { type: 'comment', text: '# Install Python dependencies' },
             { type: 'command', text: '<span class="terminal-prompt">$</span> <span class="syntax-keyword">pip install</span> <span class="syntax-flag">-r</span> requirements.txt' },
-            { type: 'success', text: '✓ Successfully installed pyside6-6.5.0 pyaudio-0.2.11' },
+            { type: 'success', text: 'Successfully installed pyside6-6.5.0 pyaudio-0.2.11' },
             { type: 'comment', text: '# Launch VoiceFlow AI' },
             { type: 'command', text: '<span class="terminal-prompt">$</span> <span class="syntax-keyword">python</span> main.py' },
-            { type: 'success', text: '🎤 VoiceFlow AI is ready! Press Ctrl+Win to dictate.' }
+            { type: 'success', text: 'VoiceFlow AI is ready. Press Ctrl+Win to dictate.' }
         ];
 
         let terminalStarted = false;
@@ -1641,7 +1779,7 @@
                 const lineEl = document.createElement('div');
                 lineEl.className = 'terminal-line';
                 lineEl.style.animationDelay = '0s';
-                lineEl.innerHTML = `<span class="${line.type === 'comment' ? 'terminal-comment' : ''}">${line.text}</span>`;
+                lineEl.innerHTML = '<span>' + line.text + '</span>';
                 terminalBody.appendChild(lineEl);
                 lineIndex++;
                 setTimeout(addLine, 400);
@@ -1649,7 +1787,80 @@
             addLine();
         }
 
-        // ===== SPEED RACE =====
+        // Video player
+        const demoVideo = document.getElementById('demoVideo');
+        const videoPlayer = demoVideo ? demoVideo.closest('.video-player') : null;
+        const videoOverlay = document.getElementById('videoOverlay');
+        const videoPlayBtn = document.getElementById('videoPlayBtn');
+        const videoPlayPause = document.getElementById('videoPlayPause');
+        const videoProgressTrack = document.getElementById('videoProgressTrack');
+        const videoProgressFill = document.getElementById('videoProgressFill');
+        const videoProgressThumb = document.getElementById('videoProgressThumb');
+        const videoTime = document.getElementById('videoTime');
+        const videoFullscreen = document.getElementById('videoFullscreen');
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60);
+            return m + ':' + s.toString().padStart(2, '0');
+        }
+
+        if (demoVideo) {
+            demoVideo.addEventListener('loadedmetadata', () => {
+                videoTime.textContent = '0:00 / ' + formatTime(demoVideo.duration);
+            });
+
+            demoVideo.addEventListener('timeupdate', () => {
+                const pct = (demoVideo.currentTime / demoVideo.duration) * 100;
+                videoProgressFill.style.width = pct + '%';
+                videoProgressThumb.style.left = pct + '%';
+                videoTime.textContent = formatTime(demoVideo.currentTime) + ' / ' + formatTime(demoVideo.duration);
+            });
+
+            demoVideo.addEventListener('play', () => {
+                videoPlayer.classList.add('playing');
+                videoPlayPause.innerHTML = '<i class="ti ti-player-pause-filled"></i>';
+            });
+
+            demoVideo.addEventListener('pause', () => {
+                videoPlayer.classList.remove('playing');
+                videoPlayPause.innerHTML = '<i class="ti ti-player-play-filled"></i>';
+            });
+
+            demoVideo.addEventListener('ended', () => {
+                videoPlayer.classList.remove('playing');
+                videoPlayPause.innerHTML = '<i class="ti ti-player-play-filled"></i>';
+            });
+
+            videoPlayBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                demoVideo.play();
+            });
+
+            videoPlayPause.addEventListener('click', (e) => {
+                e.stopPropagation();
+                demoVideo.paused ? demoVideo.play() : demoVideo.pause();
+            });
+
+            videoPlayer.addEventListener('click', (e) => {
+                if (e.target === videoPlayer || e.target === demoVideo || e.target === videoOverlay) {
+                    demoVideo.paused ? demoVideo.play() : demoVideo.pause();
+                }
+            });
+
+            videoProgressTrack.addEventListener('click', (e) => {
+                const rect = videoProgressTrack.getBoundingClientRect();
+                const pct = (e.clientX - rect.left) / rect.width;
+                demoVideo.currentTime = pct * demoVideo.duration;
+            });
+
+            videoFullscreen.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (demoVideo.requestFullscreen) demoVideo.requestFullscreen();
+            });
+        }
+
+        // Speed race
         const raceStartBtn = document.getElementById('raceStart');
         const typingText = document.getElementById('typingText');
         const voiceText = document.getElementById('voiceText');
@@ -1665,7 +1876,7 @@
             if (raceRunning) return;
             raceRunning = true;
             raceStartBtn.disabled = true;
-            raceStartBtn.textContent = '🏃 Racing...';
+            raceStartBtn.textContent = 'Racing...';
             typingText.innerHTML = '';
             voiceText.innerHTML = '';
             typingProgress.style.width = '0%';
@@ -1710,21 +1921,18 @@
                         raceStats.classList.add('visible');
                         statWords.textContent = sampleText.split(' ').length;
                         raceStartBtn.disabled = false;
-                        raceStartBtn.textContent = '🔄 Race Again';
+                        raceStartBtn.textContent = 'Race again';
                         raceRunning = false;
                     }, 500);
                 }
             }
         });
 
-        // ===== COMMAND PALETTE (Cmd+K) =====
+        // Command palette
         const cmdkOverlay = document.getElementById('cmdkOverlay');
         const cmdkDialog = document.getElementById('cmdkDialog');
         const cmdkInput = document.getElementById('cmdkInput');
-        const cmdkTrigger = document.getElementById('cmdkTrigger');
-        const cmdkList = document.getElementById('cmdkList');
         const cmdkItems = Array.from(document.querySelectorAll('.cmdk-item'));
-        let selectedIndex = 0;
 
         function openCmdk() {
             cmdkOverlay.classList.add('active');
@@ -1741,13 +1949,11 @@
 
         function filterItems(query) {
             const items = document.querySelectorAll('.cmdk-item');
-            let visibleCount = 0;
             items.forEach(item => {
                 const title = item.querySelector('.cmdk-item-title').textContent.toLowerCase();
                 const desc = item.querySelector('.cmdk-item-desc').textContent.toLowerCase();
                 if (title.includes(query.toLowerCase()) || desc.includes(query.toLowerCase())) {
                     item.style.display = 'flex';
-                    visibleCount++;
                 } else {
                     item.style.display = 'none';
                 }
@@ -1764,7 +1970,6 @@
             else if (action === 'github') window.open('https://github.com', '_blank');
         }
 
-        cmdkTrigger.addEventListener('click', openCmdk);
         cmdkOverlay.addEventListener('click', closeCmdk);
 
         document.addEventListener('keydown', (e) => {
@@ -1777,7 +1982,7 @@
 
         cmdkInput.addEventListener('input', (e) => filterItems(e.target.value));
 
-        cmdkItems.forEach((item, index) => {
+        cmdkItems.forEach(item => {
             item.addEventListener('click', () => executeAction(item.dataset.action));
         });
     </script>
