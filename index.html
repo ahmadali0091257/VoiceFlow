@@ -5,6 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VoiceFlow AI - Open Source Voice Dictation</title>
     <style>
+        /* ===== THEME VARIABLES ===== */
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #fafafa;
+            --bg-tertiary: #f5f5f5;
+            --bg-card: #ffffff;
+            --bg-nav: rgba(255, 255, 255, 0.98);
+            --bg-code: #f5f5f5;
+            --bg-kbd: #000000;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --text-muted: #999999;
+            --text-code: #d63384;
+            --text-kbd: #ffffff;
+            --border-color: #e5e5e5;
+            --border-strong: #333333;
+            --accent-primary: #000000;
+            --accent-hover: #333333;
+            --accent-contrast: #ffffff;
+            --feature-icon-bg: #f0f0f0;
+            --step-number-bg: #000000;
+            --download-bg: #000000;
+            --download-box-bg: #1a1a1a;
+            --download-box-border: #333333;
+            --download-btn-bg: #ffffff;
+            --download-btn-text: #000000;
+            --download-btn-hover: #f0f0f0;
+            --badge-bg: #10b981;
+            --shadow: rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark-mode {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #121212;
+            --bg-tertiary: #1a1a1a;
+            --bg-card: #161616;
+            --bg-nav: rgba(10, 10, 10, 0.98);
+            --bg-code: #1a1a1a;
+            --bg-kbd: #ffffff;
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0a0a0;
+            --text-muted: #777777;
+            --text-code: #f472b6;
+            --text-kbd: #000000;
+            --border-color: #2a2a2a;
+            --border-strong: #444444;
+            --accent-primary: #ffffff;
+            --accent-hover: #dddddd;
+            --accent-contrast: #000000;
+            --feature-icon-bg: #222222;
+            --step-number-bg: #ffffff;
+            --download-bg: #ffffff;
+            --download-box-bg: #f5f5f5;
+            --download-box-border: #cccccc;
+            --download-btn-bg: #000000;
+            --download-btn-text: #ffffff;
+            --download-btn-hover: #333333;
+            --badge-bg: #10b981;
+            --shadow: rgba(255, 255, 255, 0.03);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -14,8 +75,29 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
-            color: #1a1a1a;
-            background: #ffffff;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* ===== THEME TOGGLE ===== */
+        .theme-toggle {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(15deg) scale(1.05);
+            border-color: var(--accent-primary);
         }
 
         /* Navigation */
@@ -23,10 +105,11 @@
             position: fixed;
             top: 0;
             width: 100%;
-            background: rgba(255, 255, 255, 0.98);
-            border-bottom: 1px solid #e5e5e5;
+            background: var(--bg-nav);
+            border-bottom: 1px solid var(--border-color);
             z-index: 1000;
             padding: 1rem 0;
+            transition: background 0.3s ease, border-color 0.3s ease;
         }
 
         .nav-container {
@@ -41,7 +124,7 @@
         .logo {
             font-size: 1.25rem;
             font-weight: 700;
-            color: #000;
+            color: var(--text-primary);
             text-decoration: none;
             display: flex;
             align-items: center;
@@ -56,14 +139,14 @@
 
         .nav-links a {
             text-decoration: none;
-            color: #666;
+            color: var(--text-secondary);
             font-size: 0.9rem;
             font-weight: 500;
             transition: color 0.2s;
         }
 
         .nav-links a:hover {
-            color: #000;
+            color: var(--text-primary);
         }
 
         .btn {
@@ -79,12 +162,12 @@
         }
 
         .btn-primary {
-            background: #000;
-            color: #fff;
+            background: var(--accent-primary);
+            color: var(--accent-contrast);
         }
 
         .btn-primary:hover {
-            background: #333;
+            background: var(--accent-hover);
         }
 
         /* Hero Section */
@@ -106,11 +189,12 @@
             line-height: 1.1;
             margin-bottom: 1.5rem;
             letter-spacing: -0.02em;
+            color: var(--text-primary);
         }
 
         .hero-content p {
             font-size: 1.125rem;
-            color: #666;
+            color: var(--text-secondary);
             margin-bottom: 2rem;
             line-height: 1.7;
         }
@@ -130,8 +214,8 @@
         /* Features */
         .features {
             padding: 6rem 2rem;
-            background: #fafafa;
-            border-top: 1px solid #e5e5e5;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
         }
 
         .container {
@@ -147,10 +231,11 @@
             font-size: 2rem;
             font-weight: 700;
             margin-bottom: 0.75rem;
+            color: var(--text-primary);
         }
 
         .section-header p {
-            color: #666;
+            color: var(--text-secondary);
             font-size: 1.1rem;
         }
 
@@ -161,10 +246,16 @@
         }
 
         .feature-card {
-            background: #fff;
+            background: var(--bg-card);
             padding: 2rem;
             border-radius: 8px;
-            border: 1px solid #e5e5e5;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--shadow);
         }
 
         .feature-card h3 {
@@ -172,10 +263,11 @@
             font-weight: 600;
             margin-bottom: 0.75rem;
             margin-top: 1rem;
+            color: var(--text-primary);
         }
 
         .feature-card p {
-            color: #666;
+            color: var(--text-secondary);
             font-size: 0.95rem;
             line-height: 1.6;
         }
@@ -183,12 +275,313 @@
         .feature-icon {
             width: 40px;
             height: 40px;
-            background: #f0f0f0;
+            background: var(--feature-icon-bg);
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.25rem;
+        }
+
+        /* ===== SPEED RACE SECTION ===== */
+        .speed-race {
+            padding: 6rem 2rem;
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .race-container {
+            max-width: 900px;
+            margin: 3rem auto 0;
+        }
+
+        .race-start {
+            display: block;
+            margin: 0 auto 2.5rem;
+            padding: 1rem 2.5rem;
+            background: var(--accent-primary);
+            color: var(--accent-contrast);
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px var(--shadow);
+        }
+
+        .race-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--shadow);
+        }
+
+        .race-start:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .race-lanes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .race-lane {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            min-height: 200px;
+        }
+
+        .race-lane.voice {
+            border-color: #10b981;
+            border-width: 2px;
+        }
+
+        .race-lane-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .race-lane-title {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .race-lane-speed {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .race-text {
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100px;
+            word-wrap: break-word;
+        }
+
+        .race-text .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: var(--accent-primary);
+            vertical-align: middle;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .race-progress {
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+
+        .race-progress-bar {
+            height: 100%;
+            background: var(--accent-primary);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .race-lane.voice .race-progress-bar {
+            background: #10b981;
+        }
+
+        .race-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .race-stats.visible {
+            opacity: 1;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #10b981;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* ===== PRIVACY FLOW SECTION ===== */
+        .privacy-flow {
+            padding: 6rem 2rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .flow-container {
+            max-width: 1000px;
+            margin: 4rem auto 0;
+            position: relative;
+        }
+
+        .flow-diagram {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 2rem;
+            align-items: stretch;
+            position: relative;
+        }
+
+        .flow-node {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .flow-node:hover {
+            transform: translateY(-4px);
+            border-color: #10b981;
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+
+        .flow-node-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.25rem;
+            color: white;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .flow-node:nth-child(2) .flow-node-icon {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .flow-node h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .flow-node p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .flow-node-badge {
+            display: none;
+            margin-top: 1rem;
+            padding: 0.4rem 0.8rem;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid #10b981;
+        }
+
+        .flow-node:hover .flow-node-badge {
+            display: inline-block;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .flow-arrow {
+            position: absolute;
+            top: 50%;
+            font-size: 2rem;
+            color: #10b981;
+            font-weight: 700;
+            z-index: 1;
+        }
+
+        .flow-arrow-1 {
+            left: 33.33%;
+            transform: translate(-50%, -50%);
+        }
+
+        .flow-arrow-2 {
+            left: 66.66%;
+            transform: translate(-50%, -50%);
+        }
+
+        .flow-trust-message {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border: 1px solid #10b981;
+            border-radius: 12px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .flow-trust-message p {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .flow-trust-message .highlight {
+            color: #10b981;
+            font-weight: 800;
         }
 
         /* How to Use */
@@ -205,10 +598,11 @@
 
         .step {
             padding: 2rem;
-            border: 1px solid #e5e5e5;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             position: relative;
             padding-left: 4rem;
+            background: var(--bg-card);
         }
 
         .step-number {
@@ -217,8 +611,8 @@
             top: 2rem;
             width: 32px;
             height: 32px;
-            background: #000;
-            color: #fff;
+            background: var(--step-number-bg);
+            color: var(--accent-contrast);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -231,22 +625,23 @@
             font-size: 1.1rem;
             font-weight: 600;
             margin-bottom: 0.75rem;
+            color: var(--text-primary);
         }
 
         .step p, .step li {
-            color: #666;
+            color: var(--text-secondary);
             font-size: 0.95rem;
             line-height: 1.6;
             margin-bottom: 0.5rem;
         }
 
         .step code {
-            background: #f5f5f5;
+            background: var(--bg-code);
             padding: 0.2rem 0.5rem;
             border-radius: 4px;
             font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
             font-size: 0.85rem;
-            color: #d63384;
+            color: var(--text-code);
         }
 
         .step ul {
@@ -261,9 +656,9 @@
         /* Usage Instructions */
         .usage {
             padding: 4rem 2rem;
-            background: #f5f5f5;
-            border-top: 1px solid #e5e5e5;
-            border-bottom: 1px solid #e5e5e5;
+            background: var(--bg-tertiary);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .usage-box {
@@ -276,27 +671,30 @@
             font-weight: 700;
             margin-bottom: 2rem;
             text-align: center;
+            color: var(--text-primary);
         }
 
         .usage-step {
-            background: #fff;
+            background: var(--bg-card);
             padding: 1.5rem;
             margin-bottom: 1rem;
             border-radius: 6px;
-            border: 1px solid #e5e5e5;
+            border: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             gap: 1.5rem;
+            color: var(--text-primary);
         }
 
         .usage-step strong {
             min-width: 80px;
             font-weight: 600;
+            color: var(--text-primary);
         }
 
         kbd {
-            background: #000;
-            color: #fff;
+            background: var(--bg-kbd);
+            color: var(--text-kbd);
             padding: 0.3rem 0.7rem;
             border-radius: 4px;
             font-family: 'SF Mono', 'Monaco', monospace;
@@ -318,19 +716,21 @@
 
         .api-card {
             padding: 2.5rem;
-            border: 1px solid #e5e5e5;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             text-align: center;
+            background: var(--bg-card);
         }
 
         .api-card h3 {
             font-size: 1.25rem;
             font-weight: 600;
             margin: 1rem 0 0.5rem;
+            color: var(--text-primary);
         }
 
         .api-card p {
-            color: #666;
+            color: var(--text-secondary);
             font-size: 0.95rem;
             line-height: 1.6;
         }
@@ -338,7 +738,7 @@
         .badge {
             display: inline-block;
             padding: 0.25rem 0.75rem;
-            background: #10b981;
+            background: var(--badge-bg);
             color: #fff;
             border-radius: 12px;
             font-size: 0.75rem;
@@ -349,8 +749,8 @@
         /* Download */
         .download {
             padding: 6rem 2rem;
-            background: #000;
-            color: #fff;
+            background: var(--download-bg);
+            color: var(--accent-contrast);
             text-align: center;
         }
 
@@ -358,37 +758,51 @@
             font-size: 2.5rem;
             font-weight: 800;
             margin-bottom: 1rem;
+            color: var(--accent-contrast);
         }
 
         .download > p {
             font-size: 1.125rem;
-            color: #999;
+            color: var(--text-muted);
             margin-bottom: 3rem;
+        }
+
+        body.dark-mode .download > p {
+            color: #666;
         }
 
         .download-box {
             max-width: 600px;
             margin: 0 auto;
             padding: 3rem;
-            background: #1a1a1a;
+            background: var(--download-box-bg);
             border-radius: 12px;
-            border: 1px solid #333;
+            border: 1px solid var(--download-box-border);
         }
 
         .download-box h3 {
             font-size: 1.25rem;
             margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        body.dark-mode .download-box h3 {
+            color: #1a1a1a;
         }
 
         .download-box p {
-            color: #999;
+            color: var(--text-muted);
             margin-bottom: 2rem;
+        }
+
+        body.dark-mode .download-box p {
+            color: #666;
         }
 
         .download-btn {
             display: inline-block;
-            background: #fff;
-            color: #000;
+            background: var(--download-btn-bg);
+            color: var(--download-btn-text);
             padding: 1rem 2rem;
             border-radius: 6px;
             text-decoration: none;
@@ -398,27 +812,32 @@
         }
 
         .download-btn:hover {
-            background: #f0f0f0;
+            background: var(--download-btn-hover);
         }
 
         .download-features {
             margin-top: 2rem;
             padding-top: 2rem;
-            border-top: 1px solid #333;
+            border-top: 1px solid var(--download-box-border);
             display: flex;
             justify-content: center;
             gap: 2rem;
             font-size: 0.875rem;
-            color: #999;
+            color: var(--text-muted);
+        }
+
+        body.dark-mode .download-features {
+            color: #666;
         }
 
         /* Footer */
         footer {
             padding: 3rem 2rem;
             text-align: center;
-            border-top: 1px solid #e5e5e5;
-            color: #666;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
             font-size: 0.9rem;
+            background: var(--bg-primary);
         }
 
         /* Responsive */
@@ -441,6 +860,24 @@
             .nav-links {
                 display: none;
             }
+
+            .race-lanes,
+            .flow-diagram {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-arrow {
+                display: none;
+            }
+
+            .race-stats {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
@@ -455,8 +892,11 @@
             </a>
             <div class="nav-links">
                 <a href="#features">Features</a>
+                <a href="#speed-race">Speed</a>
+                <a href="#privacy">Privacy</a>
                 <a href="#how-to-use">Setup</a>
                 <a href="#usage">Usage</a>
+                <button class="theme-toggle" id="themeToggle" title="Toggle theme">🌙</button>
                 <a href="#download" class="btn btn-primary">Download</a>
             </div>
         </div>
@@ -511,6 +951,104 @@
                     <div class="feature-icon">🔒</div>
                     <h3>Privacy First</h3>
                     <p>Runs locally on your machine. You control the API keys. No data collection.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SPEED RACE SECTION -->
+    <section class="speed-race" id="speed-race">
+        <div class="container">
+            <div class="section-header" style="text-align: center;">
+                <h2>🏁 Typing vs Dictation Race</h2>
+                <p>See the difference for yourself. Click start and watch the magic.</p>
+            </div>
+            <div class="race-container">
+                <button class="race-start" id="raceStart">▶️ Start the Race</button>
+                
+                <div class="race-lanes">
+                    <!-- TYPING LANE -->
+                    <div class="race-lane typing">
+                        <div class="race-lane-header">
+                            <span class="race-lane-title">⌨️ Average Typing</span>
+                            <span class="race-lane-speed">~40 WPM</span>
+                        </div>
+                        <div class="race-text" id="typingText"></div>
+                        <div class="race-progress">
+                            <div class="race-progress-bar" id="typingProgress"></div>
+                        </div>
+                    </div>
+
+                    <!-- VOICE LANE -->
+                    <div class="race-lane voice">
+                        <div class="race-lane-header">
+                            <span class="race-lane-title">🎤 VoiceFlow AI</span>
+                            <span class="race-lane-speed">~150+ WPM</span>
+                        </div>
+                        <div class="race-text" id="voiceText"></div>
+                        <div class="race-progress">
+                            <div class="race-progress-bar" id="voiceProgress"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="race-stats" id="raceStats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="statSpeed">3.75x</div>
+                        <div class="stat-label">Faster Speed</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statTime">73%</div>
+                        <div class="stat-label">Time Saved</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statWords">0</div>
+                        <div class="stat-label">Words Dictated</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRIVACY FLOW SECTION -->
+    <section class="privacy-flow" id="privacy">
+        <div class="container">
+            <div class="section-header" style="text-align: center;">
+                <h2>🔐 Your Privacy, Our Priority</h2>
+                <p>Hover over each step to see why your data stays yours.</p>
+            </div>
+            <div class="flow-container">
+                <div class="flow-diagram">
+                    <!-- Step 1: Mic -->
+                    <div class="flow-node">
+                        <div class="flow-node-icon">🎤</div>
+                        <h3>Your Microphone</h3>
+                        <p>Audio captured locally on your machine. Nothing leaves your computer until encrypted.</p>
+                        <span class="flow-node-badge">✅ 100% Local</span>
+                    </div>
+
+                    <!-- Step 2: Encrypted Tunnel -->
+                    <div class="flow-node">
+                        <div class="flow-node-icon">🔒</div>
+                        <h3>Encrypted Tunnel</h3>
+                        <p>Direct HTTPS connection to your chosen AI provider. No middleman, no proxy servers.</p>
+                        <span class="flow-node-badge">✅ AES-256 Encryption</span>
+                    </div>
+
+                    <!-- Step 3: Your Text -->
+                    <div class="flow-node">
+                        <div class="flow-node-icon">📝</div>
+                        <h3>Your Text Returns</h3>
+                        <p>Only transcribed text comes back. No audio is stored, logged, or used for training.</p>
+                        <span class="flow-node-badge">✅ Zero Data Retention</span>
+                    </div>
+
+                    <div class="flow-arrow flow-arrow-1">→</div>
+                    <div class="flow-arrow flow-arrow-2">→</div>
+                </div>
+
+                <div class="flow-trust-message">
+                    <p>🛡️ <span class="highlight">We don't have a database for your audio.</span> Your voice never touches our servers. Period.</p>
                 </div>
             </div>
         </div>
@@ -585,7 +1123,7 @@
                 <strong>Step 4</strong>
                 <span>Release the keys when you're done. Text appears automatically.</span>
             </div>
-            <p style="text-align: center; margin-top: 2rem; color: #666; font-size: 0.95rem;">
+            <p style="text-align: center; margin-top: 2rem; color: var(--text-secondary); font-size: 0.95rem;">
                 Works in any text field—even apps without built-in voice support.
             </p>
         </div>
@@ -641,7 +1179,25 @@
     </footer>
 
     <script>
-        // Smooth scroll
+        // ===== THEME TOGGLE =====
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('voiceflow-theme');
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.textContent = '☀️';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDark = body.classList.contains('dark-mode');
+            themeToggle.textContent = isDark ? '☀️' : '🌙';
+            localStorage.setItem('voiceflow-theme', isDark ? 'dark' : 'light');
+        });
+
+        // ===== SMOOTH SCROLL =====
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -650,6 +1206,79 @@
                     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
+        });
+
+        // ===== SPEED RACE GAME =====
+        const raceStartBtn = document.getElementById('raceStart');
+        const typingText = document.getElementById('typingText');
+        const voiceText = document.getElementById('voiceText');
+        const typingProgress = document.getElementById('typingProgress');
+        const voiceProgress = document.getElementById('voiceProgress');
+        const raceStats = document.getElementById('raceStats');
+        const statWords = document.getElementById('statWords');
+
+        const sampleText = "VoiceFlow AI is an open-source tool that brings voice typing to any application on your computer. Just speak and watch your words appear instantly.";
+
+        let raceRunning = false;
+
+        raceStartBtn.addEventListener('click', () => {
+            if (raceRunning) return;
+            raceRunning = true;
+            raceStartBtn.disabled = true;
+            raceStartBtn.textContent = '🏃 Racing...';
+
+            // Reset
+            typingText.innerHTML = '';
+            voiceText.innerHTML = '';
+            typingProgress.style.width = '0%';
+            voiceProgress.style.width = '0%';
+            raceStats.classList.remove('visible');
+
+            const totalChars = sampleText.length;
+            const typingDuration = 12000; // 12 seconds for typing (slow)
+            const voiceDuration = 3000;    // 3 seconds for voice (fast)
+
+            // Typing simulation - character by character slowly
+            let typingIndex = 0;
+            const typingInterval = setInterval(() => {
+                if (typingIndex < totalChars) {
+                    typingText.innerHTML = sampleText.substring(0, typingIndex + 1) + '<span class="cursor"></span>';
+                    typingIndex++;
+                    typingProgress.style.width = ((typingIndex / totalChars) * 100) + '%';
+                } else {
+                    clearInterval(typingInterval);
+                    typingText.innerHTML = sampleText;
+                    typingProgress.style.width = '100%';
+                    checkRaceComplete();
+                }
+            }, typingDuration / totalChars);
+
+            // Voice simulation - fast appearance
+            let voiceIndex = 0;
+            const voiceInterval = setInterval(() => {
+                if (voiceIndex < totalChars) {
+                    voiceText.innerHTML = sampleText.substring(0, voiceIndex + 1) + '<span class="cursor"></span>';
+                    voiceIndex += 3; // 3 chars at a time (faster)
+                    voiceProgress.style.width = (Math.min(voiceIndex / totalChars, 1) * 100) + '%';
+                } else {
+                    clearInterval(voiceInterval);
+                    voiceText.innerHTML = sampleText;
+                    voiceProgress.style.width = '100%';
+                    checkRaceComplete();
+                }
+            }, voiceDuration / (totalChars / 3));
+
+            function checkRaceComplete() {
+                if (typingText.innerHTML === sampleText && voiceText.innerHTML === sampleText) {
+                    setTimeout(() => {
+                        raceStats.classList.add('visible');
+                        statWords.textContent = sampleText.split(' ').length;
+                        raceStartBtn.disabled = false;
+                        raceStartBtn.textContent = '🔄 Race Again';
+                        raceRunning = false;
+                    }, 500);
+                }
+            }
         });
     </script>
 </body>
