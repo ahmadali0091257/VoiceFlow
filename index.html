@@ -34,6 +34,10 @@
             --download-btn-hover: #f0f0f0;
             --badge-bg: #10b981;
             --shadow: rgba(0, 0, 0, 0.05);
+            --gradient-1: #10b981;
+            --gradient-2: #3b82f6;
+            --gradient-3: #8b5cf6;
+            --gradient-4: #ec4899;
         }
 
         body.dark-mode {
@@ -78,7 +82,77 @@
             color: var(--text-primary);
             background: var(--bg-primary);
             transition: background 0.3s ease, color 0.3s ease;
+            cursor: default;
+            overflow-x: hidden;
         }
+
+        /* ===== SCROLL PROGRESS BAR ===== */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gradient-1), var(--gradient-2), var(--gradient-3), var(--gradient-4));
+            background-size: 300% 100%;
+            animation: gradientShift 3s ease infinite;
+            z-index: 9999;
+            transition: width 0.1s ease;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* ===== NOISE TEXTURE OVERLAY ===== */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* ===== SPOTLIGHT CURSOR EFFECT ===== */
+        .spotlight {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 2;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s ease;
+            mix-blend-mode: screen;
+        }
+
+        body.dark-mode .spotlight {
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 70%);
+        }
+
+        /* ===== SCROLL REVEAL ANIMATIONS ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
 
         /* ===== THEME TOGGLE ===== */
         .theme-toggle {
@@ -100,10 +174,125 @@
             border-color: var(--accent-primary);
         }
 
+        /* ===== COMMAND PALETTE (Cmd+K) ===== */
+        .cmdk-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            z-index: 9998;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .cmdk-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .cmdk-dialog {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%) scale(0.95);
+            width: 90%;
+            max-width: 550px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s cubic-bezier(0.5, 0, 0, 1);
+            overflow: hidden;
+        }
+
+        .cmdk-dialog.active {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateX(-50%) scale(1);
+        }
+
+        .cmdk-input {
+            width: 100%;
+            padding: 1.25rem 1.5rem;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cmdk-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+
+        .cmdk-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: background 0.15s ease;
+        }
+
+        .cmdk-item:hover,
+        .cmdk-item.selected {
+            background: var(--bg-tertiary);
+        }
+
+        .cmdk-item-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--feature-icon-bg);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cmdk-item-text {
+            flex: 1;
+        }
+
+        .cmdk-item-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .cmdk-item-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .cmdk-shortcut {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            color: var(--text-secondary);
+        }
+
+        .cmdk-hint {
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-tertiary);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+        }
+
         /* Navigation */
         nav {
             position: fixed;
-            top: 0;
+            top: 3px;
             width: 100%;
             background: var(--bg-nav);
             border-bottom: 1px solid var(--border-color);
@@ -149,6 +338,35 @@
             color: var(--text-primary);
         }
 
+        .cmdk-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.75rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .cmdk-btn:hover {
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+
+        .cmdk-btn kbd {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            font-family: 'SF Mono', monospace;
+        }
+
         .btn {
             padding: 0.6rem 1.25rem;
             border-radius: 6px;
@@ -181,6 +399,8 @@
             grid-template-columns: 1fr 1fr;
             gap: 4rem;
             align-items: center;
+            position: relative;
+            z-index: 3;
         }
 
         .hero-content h1 {
@@ -190,6 +410,21 @@
             margin-bottom: 1.5rem;
             letter-spacing: -0.02em;
             color: var(--text-primary);
+        }
+
+        /* Gradient Text Effect */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2), var(--gradient-3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% 200%;
+            animation: gradientMove 4s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
         .hero-content p {
@@ -211,11 +446,13 @@
             border-radius: 12px;
         }
 
-        /* Features */
+        /* ===== BENTO GRID FEATURES ===== */
         .features {
             padding: 6rem 2rem;
             background: var(--bg-secondary);
             border-top: 1px solid var(--border-color);
+            position: relative;
+            z-index: 3;
         }
 
         .container {
@@ -239,55 +476,270 @@
             font-size: 1.1rem;
         }
 
-        .features-grid {
+        /* Bento Grid Layout */
+        .bento-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: auto auto;
+            gap: 1.25rem;
         }
 
-        .feature-card {
+        .bento-card {
             background: var(--bg-card);
-            padding: 2rem;
-            border-radius: 8px;
+            border-radius: 16px;
             border: 1px solid var(--border-color);
-            transition: transform 0.2s, box-shadow 0.2s;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
         }
 
-        .feature-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px var(--shadow);
+        .bento-card:hover {
+            transform: translateY(-4px);
         }
 
-        .feature-card h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            margin-top: 1rem;
-            color: var(--text-primary);
+        /* Animated Gradient Border */
+        .bento-card.gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            padding: 2px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2), var(--gradient-3), var(--gradient-4));
+            background-size: 300% 300%;
+            animation: borderRotate 4s linear infinite;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .feature-card p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.6;
+        .bento-card.gradient-border:hover::before {
+            opacity: 1;
         }
 
-        .feature-icon {
-            width: 40px;
-            height: 40px;
+        @keyframes borderRotate {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Bento Grid Sizes */
+        .bento-large {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+
+        .bento-wide {
+            grid-column: span 2;
+        }
+
+        .bento-tall {
+            grid-row: span 2;
+        }
+
+        .bento-icon {
+            width: 50px;
+            height: 50px;
             background: var(--feature-icon-bg);
-            border-radius: 6px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
         }
 
-        /* ===== SPEED RACE SECTION ===== */
+        .bento-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .bento-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .bento-card .big-number {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .bento-card .visual {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            font-family: 'SF Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .bento-card .shortcut-demo {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            align-items: center;
+        }
+
+        .bento-card .shortcut-demo kbd {
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+        }
+
+        /* ===== ANIMATED COUNTERS ===== */
+        .stats-section {
+            padding: 5rem 2rem;
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border-color);
+            position: relative;
+            z-index: 3;
+        }
+
+        .stats-grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-block {
+            padding: 1.5rem;
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* ===== AUTO-TYPING TERMINAL ===== */
+        .how-to-use {
+            padding: 6rem 2rem;
+            position: relative;
+            z-index: 3;
+        }
+
+        .terminal-window {
+            background: #0d1117;
+            border-radius: 12px;
+            overflow: hidden;
+            max-width: 700px;
+            margin: 3rem auto 0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid #30363d;
+        }
+
+        .terminal-header {
+            background: #161b22;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot.red { background: #ff5f56; }
+        .terminal-dot.yellow { background: #ffbd2e; }
+        .terminal-dot.green { background: #27c93f; }
+
+        .terminal-title {
+            margin-left: 1rem;
+            font-size: 0.8rem;
+            color: #8b949e;
+            font-family: 'SF Mono', monospace;
+        }
+
+        .terminal-body {
+            padding: 1.5rem;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            font-size: 0.85rem;
+            color: #c9d1d9;
+            line-height: 1.8;
+            min-height: 250px;
+        }
+
+        .terminal-line {
+            margin-bottom: 0.25rem;
+            opacity: 0;
+            animation: terminalFade 0.3s ease forwards;
+        }
+
+        @keyframes terminalFade {
+            to { opacity: 1; }
+        }
+
+        .terminal-prompt {
+            color: #7ee787;
+        }
+
+        .terminal-command {
+            color: #c9d1d9;
+        }
+
+        .terminal-success {
+            color: #7ee787;
+        }
+
+        .terminal-comment {
+            color: #8b949e;
+        }
+
+        .terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1em;
+            background: #7ee787;
+            vertical-align: middle;
+            animation: terminalBlink 1s infinite;
+        }
+
+        @keyframes terminalBlink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .syntax-keyword { color: #ff7b72; }
+        .syntax-string { color: #a5d6ff; }
+        .syntax-flag { color: #79c0ff; }
+
+        /* ===== SPEED RACE (keeping previous) ===== */
         .speed-race {
             padding: 6rem 2rem;
             background: var(--bg-primary);
             border-top: 1px solid var(--border-color);
+            position: relative;
+            z-index: 3;
         }
 
         .race-container {
@@ -312,13 +764,6 @@
 
         .race-start:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px var(--shadow);
-        }
-
-        .race-start:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
         }
 
         .race-lanes {
@@ -334,7 +779,6 @@
             border-radius: 12px;
             padding: 1.5rem;
             position: relative;
-            overflow: hidden;
             min-height: 200px;
         }
 
@@ -346,7 +790,6 @@
         .race-lane-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             margin-bottom: 1rem;
             padding-bottom: 0.75rem;
             border-bottom: 1px solid var(--border-color);
@@ -356,9 +799,6 @@
             font-weight: 700;
             font-size: 1rem;
             color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
         .race-lane-speed {
@@ -368,12 +808,11 @@
         }
 
         .race-text {
-            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            font-family: 'SF Mono', monospace;
             font-size: 0.9rem;
             color: var(--text-primary);
             line-height: 1.8;
             min-height: 100px;
-            word-wrap: break-word;
         }
 
         .race-text .cursor {
@@ -422,13 +861,9 @@
             transition: opacity 0.5s ease;
         }
 
-        .race-stats.visible {
-            opacity: 1;
-        }
+        .race-stats.visible { opacity: 1; }
 
-        .stat-item {
-            text-align: center;
-        }
+        .stat-item { text-align: center; }
 
         .stat-value {
             font-size: 2rem;
@@ -443,25 +878,24 @@
             font-weight: 500;
         }
 
-        /* ===== PRIVACY FLOW SECTION ===== */
+        /* ===== PRIVACY FLOW ===== */
         .privacy-flow {
             padding: 6rem 2rem;
             background: var(--bg-secondary);
             border-top: 1px solid var(--border-color);
             position: relative;
+            z-index: 3;
         }
 
         .flow-container {
             max-width: 1000px;
             margin: 4rem auto 0;
-            position: relative;
         }
 
         .flow-diagram {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 2rem;
-            align-items: stretch;
             position: relative;
         }
 
@@ -471,21 +905,18 @@
             border-radius: 16px;
             padding: 2rem 1.5rem;
             text-align: center;
-            position: relative;
             transition: all 0.3s ease;
-            cursor: default;
         }
 
         .flow-node:hover {
             transform: translateY(-4px);
             border-color: #10b981;
-            box-shadow: 0 10px 30px var(--shadow);
         }
 
         .flow-node-icon {
             width: 70px;
             height: 70px;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: linear-gradient(135deg, #10b981, #059669);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -493,12 +924,10 @@
             font-size: 2rem;
             margin: 0 auto 1.25rem;
             color: white;
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
         }
 
         .flow-node:nth-child(2) .flow-node-icon {
-            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+            background: linear-gradient(135deg, #3b82f6, #1e40af);
         }
 
         .flow-node h3 {
@@ -511,7 +940,6 @@
         .flow-node p {
             font-size: 0.9rem;
             color: var(--text-secondary);
-            line-height: 1.5;
         }
 
         .flow-node-badge {
@@ -528,44 +956,13 @@
 
         .flow-node:hover .flow-node-badge {
             display: inline-block;
-            animation: fadeInUp 0.3s ease;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .flow-arrow {
-            position: absolute;
-            top: 50%;
-            font-size: 2rem;
-            color: #10b981;
-            font-weight: 700;
-            z-index: 1;
-        }
-
-        .flow-arrow-1 {
-            left: 33.33%;
-            transform: translate(-50%, -50%);
-        }
-
-        .flow-arrow-2 {
-            left: 66.66%;
-            transform: translate(-50%, -50%);
         }
 
         .flow-trust-message {
             text-align: center;
             margin-top: 3rem;
             padding: 1.5rem;
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+            background: rgba(16, 185, 129, 0.1);
             border: 1px solid #10b981;
             border-radius: 12px;
             max-width: 700px;
@@ -573,98 +970,22 @@
             margin-right: auto;
         }
 
-        .flow-trust-message p {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
         .flow-trust-message .highlight {
             color: #10b981;
             font-weight: 800;
         }
 
-        /* How to Use */
-        .how-to-use {
-            padding: 6rem 2rem;
-        }
-
-        .steps {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .step {
-            padding: 2rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            position: relative;
-            padding-left: 4rem;
-            background: var(--bg-card);
-        }
-
-        .step-number {
-            position: absolute;
-            left: 1.5rem;
-            top: 2rem;
-            width: 32px;
-            height: 32px;
-            background: var(--step-number-bg);
-            color: var(--accent-contrast);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
-
-        .step h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: var(--text-primary);
-        }
-
-        .step p, .step li {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 0.5rem;
-        }
-
-        .step code {
-            background: var(--bg-code);
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
-            font-size: 0.85rem;
-            color: var(--text-code);
-        }
-
-        .step ul {
-            margin-left: 1.5rem;
-            margin-top: 0.75rem;
-        }
-
-        .step li {
-            margin-bottom: 0.35rem;
-        }
-
-        /* Usage Instructions */
+        /* Usage */
         .usage {
             padding: 4rem 2rem;
             background: var(--bg-tertiary);
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
+            position: relative;
+            z-index: 3;
         }
 
-        .usage-box {
-            max-width: 800px;
-            margin: 0 auto;
-        }
+        .usage-box { max-width: 800px; margin: 0 auto; }
 
         .usage-box h3 {
             font-size: 1.5rem;
@@ -689,7 +1010,6 @@
         .usage-step strong {
             min-width: 80px;
             font-weight: 600;
-            color: var(--text-primary);
         }
 
         kbd {
@@ -697,7 +1017,7 @@
             color: var(--text-kbd);
             padding: 0.3rem 0.7rem;
             border-radius: 4px;
-            font-family: 'SF Mono', 'Monaco', monospace;
+            font-family: 'SF Mono', monospace;
             font-size: 0.85rem;
             font-weight: 600;
         }
@@ -705,6 +1025,8 @@
         /* API Section */
         .api-section {
             padding: 6rem 2rem;
+            position: relative;
+            z-index: 3;
         }
 
         .api-grid {
@@ -732,7 +1054,6 @@
         .api-card p {
             color: var(--text-secondary);
             font-size: 0.95rem;
-            line-height: 1.6;
         }
 
         .badge {
@@ -752,6 +1073,8 @@
             background: var(--download-bg);
             color: var(--accent-contrast);
             text-align: center;
+            position: relative;
+            z-index: 3;
         }
 
         .download h2 {
@@ -765,10 +1088,6 @@
             font-size: 1.125rem;
             color: var(--text-muted);
             margin-bottom: 3rem;
-        }
-
-        body.dark-mode .download > p {
-            color: #666;
         }
 
         .download-box {
@@ -786,17 +1105,9 @@
             color: var(--text-primary);
         }
 
-        body.dark-mode .download-box h3 {
-            color: #1a1a1a;
-        }
-
         .download-box p {
             color: var(--text-muted);
             margin-bottom: 2rem;
-        }
-
-        body.dark-mode .download-box p {
-            color: #666;
         }
 
         .download-btn {
@@ -826,11 +1137,6 @@
             color: var(--text-muted);
         }
 
-        body.dark-mode .download-features {
-            color: #666;
-        }
-
-        /* Footer */
         footer {
             padding: 3rem 2rem;
             text-align: center;
@@ -838,50 +1144,88 @@
             color: var(--text-secondary);
             font-size: 0.9rem;
             background: var(--bg-primary);
+            position: relative;
+            z-index: 3;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .hero {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
-            .hero-content h1 {
-                font-size: 2.25rem;
-            }
-
-            .features-grid,
-            .steps,
-            .api-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .nav-links {
-                display: none;
-            }
-
-            .race-lanes,
-            .flow-diagram {
-                grid-template-columns: 1fr;
-            }
-
-            .flow-arrow {
-                display: none;
-            }
-
-            .race-stats {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .stat-value {
-                font-size: 1.5rem;
-            }
+            .hero { grid-template-columns: 1fr; }
+            .hero-content h1 { font-size: 2.25rem; }
+            .nav-links { display: none; }
+            .bento-grid { grid-template-columns: 1fr; }
+            .bento-large, .bento-wide, .bento-tall { grid-column: span 1; grid-row: span 1; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .race-lanes, .flow-diagram { grid-template-columns: 1fr; }
+            .race-stats { grid-template-columns: 1fr; }
+            .spotlight { display: none; }
         }
     </style>
 </head>
 <body>
+
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Spotlight Cursor Effect -->
+    <div class="spotlight" id="spotlight"></div>
+
+    <!-- Command Palette -->
+    <div class="cmdk-overlay" id="cmdkOverlay"></div>
+    <div class="cmdk-dialog" id="cmdkDialog">
+        <input type="text" class="cmdk-input" id="cmdkInput" placeholder="Type a command or search..." autofocus>
+        <div class="cmdk-list" id="cmdkList">
+            <div class="cmdk-item" data-action="features">
+                <div class="cmdk-item-icon">⚡</div>
+                <div class="cmdk-item-text">
+                    <div class="cmdk-item-title">View Features</div>
+                    <div class="cmdk-item-desc">Explore all VoiceFlow features</div>
+                </div>
+                <span class="cmdk-shortcut">↵</span>
+            </div>
+            <div class="cmdk-item" data-action="download">
+                <div class="cmdk-item-icon">⬇️</div>
+                <div class="cmdk-item-text">
+                    <div class="cmdk-item-title">Download Now</div>
+                    <div class="cmdk-item-desc">Get VoiceFlow AI for Windows</div>
+                </div>
+                <span class="cmdk-shortcut">↵</span>
+            </div>
+            <div class="cmdk-item" data-action="speed">
+                <div class="cmdk-item-icon">🏁</div>
+                <div class="cmdk-item-text">
+                    <div class="cmdk-item-title">Speed Race Demo</div>
+                    <div class="cmdk-item-desc">See typing vs dictation</div>
+                </div>
+                <span class="cmdk-shortcut">↵</span>
+            </div>
+            <div class="cmdk-item" data-action="privacy">
+                <div class="cmdk-item-icon">🔒</div>
+                <div class="cmdk-item-text">
+                    <div class="cmdk-item-title">Privacy Flow</div>
+                    <div class="cmdk-item-desc">Learn how your data is protected</div>
+                </div>
+                <span class="cmdk-shortcut">↵</span>
+            </div>
+            <div class="cmdk-item" data-action="theme">
+                <div class="cmdk-item-icon">🌓</div>
+                <div class="cmdk-item-text">
+                    <div class="cmdk-item-title">Toggle Theme</div>
+                    <div class="cmdk-item-desc">Switch between light and dark mode</div>
+                </div>
+                <span class="cmdk-shortcut">⌘D</span>
+            </div>
+            <div class="cmdk-item" data-action="github">
+                <div class="cmdk-item-icon">💻</div>
+                <div class="cmdk-item-text">
+                    <div class="cmdk-item-title">View on GitHub</div>
+                    <div class="cmdk-item-desc">Star the repository</div>
+                </div>
+                <span class="cmdk-shortcut">↵</span>
+            </div>
+        </div>
+        <div class="cmdk-hint">Press <kbd>Esc</kbd> to close · <kbd>↑↓</kbd> to navigate</div>
+    </div>
 
     <!-- Navigation -->
     <nav>
@@ -894,8 +1238,9 @@
                 <a href="#features">Features</a>
                 <a href="#speed-race">Speed</a>
                 <a href="#privacy">Privacy</a>
-                <a href="#how-to-use">Setup</a>
-                <a href="#usage">Usage</a>
+                <button class="cmdk-btn" id="cmdkTrigger">
+                    Search... <kbd>⌘K</kbd>
+                </button>
                 <button class="theme-toggle" id="themeToggle" title="Toggle theme">🌙</button>
                 <a href="#download" class="btn btn-primary">Download</a>
             </div>
@@ -904,71 +1249,121 @@
 
     <!-- Hero -->
     <section class="hero">
-        <div class="hero-content">
-            <h1>Voice dictation that actually works</h1>
+        <div class="hero-content reveal">
+            <h1>Voice dictation that <span class="gradient-text">actually works</span></h1>
             <p>An open-source tool that brings voice typing to any application on your computer. No subscriptions, no cloud dependencies—just speak and type.</p>
             <a href="#download" class="btn btn-primary" style="padding: 0.8rem 1.5rem; font-size: 1rem;">Download for Windows</a>
         </div>
-        <div class="hero-image">
+        <div class="hero-image reveal reveal-delay-2">
             <img src="https://i.ibb.co/d4JJD66X/1781436324.png" alt="VoiceFlow AI">
         </div>
     </section>
 
-    <!-- Features -->
+    <!-- Stats Section with Counters -->
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-block reveal">
+                <div class="stat-number" data-target="10000">0</div>
+                <div class="stat-label">Downloads</div>
+            </div>
+            <div class="stat-block reveal reveal-delay-1">
+                <div class="stat-number" data-target="150">0</div>
+                <div class="stat-label">Words Per Minute</div>
+            </div>
+            <div class="stat-block reveal reveal-delay-2">
+                <div class="stat-number" data-target="99">0</div>
+                <div class="stat-label">Accuracy Rate %</div>
+            </div>
+            <div class="stat-block reveal reveal-delay-3">
+                <div class="stat-number" data-target="0">0</div>
+                <div class="stat-label">Data Collected</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bento Grid Features -->
     <section class="features" id="features">
         <div class="container">
-            <div class="section-header">
-                <h2>Why VoiceFlow?</h2>
+            <div class="section-header reveal">
+                <h2>Why developers <span class="gradient-text">love</span> VoiceFlow</h2>
                 <p>Built for developers, designed for everyone.</p>
             </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">⌘</div>
+            <div class="bento-grid">
+                <!-- Large Feature Card -->
+                <div class="bento-card bento-large gradient-border reveal">
+                    <div class="bento-icon">⚡</div>
+                    <h3>Real-time & Lightning Fast</h3>
+                    <p>Powered by Groq's inference engine. See your words appear as you speak, with zero lag.</p>
+                    <div class="big-number" data-target="150">0</div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">Words per minute</div>
+                    <div class="visual">
+                        <span class="syntax-comment">// Your voice → Text instantly</span><br>
+                        <span class="syntax-keyword">await</span> <span class="syntax-string">transcribe</span>(<span class="syntax-string">audio</span>);
+                    </div>
+                </div>
+
+                <!-- Wide Card -->
+                <div class="bento-card bento-wide reveal reveal-delay-1">
+                    <div class="bento-icon">⌘</div>
                     <h3>Works Everywhere</h3>
                     <p>Type with your voice in VS Code, Notepad, browsers—any app that accepts text input.</p>
+                    <div class="visual">VS Code · Notepad · Chrome · Slack · Discord · Figma</div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Real-time & Fast</h3>
-                    <p>Powered by Groq's lightning-fast inference. See your words appear as you speak.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔓</div>
+
+                <!-- Normal Card -->
+                <div class="bento-card gradient-border reveal reveal-delay-2">
+                    <div class="bento-icon">🔓</div>
                     <h3>100% Open Source</h3>
-                    <p>Free forever. No telemetry, no paywalls, no limitations. Your data stays yours.</p>
+                    <p>Free forever. No telemetry, no paywalls.</p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎯</div>
+
+                <!-- Normal Card -->
+                <div class="bento-card reveal reveal-delay-3">
+                    <div class="bento-icon">🎯</div>
                     <h3>Simple Shortcuts</h3>
-                    <p>Hold Ctrl + Win, speak, release. That's it. No complicated setup or configuration.</p>
+                    <p>Hold, speak, release. Done.</p>
+                    <div class="shortcut-demo">
+                        <kbd>Ctrl</kbd>
+                        <span style="color: var(--text-muted);">+</span>
+                        <kbd>Win</kbd>
+                    </div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🤖</div>
+
+                <!-- Wide Card -->
+                <div class="bento-card bento-wide reveal">
+                    <div class="bento-icon">🤖</div>
                     <h3>Dual AI Support</h3>
                     <p>Use DeepSeek AI or Groq (free). Choose the backend that works best for you.</p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔒</div>
+
+                <!-- Normal Card -->
+                <div class="bento-card reveal reveal-delay-1">
+                    <div class="bento-icon">🔒</div>
                     <h3>Privacy First</h3>
-                    <p>Runs locally on your machine. You control the API keys. No data collection.</p>
+                    <p>Runs locally. You control API keys. No data collection.</p>
+                </div>
+
+                <!-- Normal Card -->
+                <div class="bento-card gradient-border reveal reveal-delay-2">
+                    <div class="bento-icon">🌍</div>
+                    <h3>Multi-Language</h3>
+                    <p>Support for 50+ languages including Urdu, Hindi, Arabic.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- SPEED RACE SECTION -->
+    <!-- Speed Race Section -->
     <section class="speed-race" id="speed-race">
         <div class="container">
-            <div class="section-header" style="text-align: center;">
+            <div class="section-header reveal" style="text-align: center;">
                 <h2>🏁 Typing vs Dictation Race</h2>
                 <p>See the difference for yourself. Click start and watch the magic.</p>
             </div>
             <div class="race-container">
-                <button class="race-start" id="raceStart">▶️ Start the Race</button>
-                
+                <button class="race-start reveal" id="raceStart">▶️ Start the Race</button>
                 <div class="race-lanes">
-                    <!-- TYPING LANE -->
-                    <div class="race-lane typing">
+                    <div class="race-lane typing reveal reveal-delay-1">
                         <div class="race-lane-header">
                             <span class="race-lane-title">⌨️ Average Typing</span>
                             <span class="race-lane-speed">~40 WPM</span>
@@ -978,9 +1373,7 @@
                             <div class="race-progress-bar" id="typingProgress"></div>
                         </div>
                     </div>
-
-                    <!-- VOICE LANE -->
-                    <div class="race-lane voice">
+                    <div class="race-lane voice reveal reveal-delay-2">
                         <div class="race-lane-header">
                             <span class="race-lane-title">🎤 VoiceFlow AI</span>
                             <span class="race-lane-speed">~150+ WPM</span>
@@ -991,14 +1384,13 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="race-stats" id="raceStats">
                     <div class="stat-item">
-                        <div class="stat-value" id="statSpeed">3.75x</div>
+                        <div class="stat-value">3.75x</div>
                         <div class="stat-label">Faster Speed</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value" id="statTime">73%</div>
+                        <div class="stat-value">73%</div>
                         <div class="stat-label">Time Saved</div>
                     </div>
                     <div class="stat-item">
@@ -1010,94 +1402,57 @@
         </div>
     </section>
 
-    <!-- PRIVACY FLOW SECTION -->
+    <!-- Privacy Flow -->
     <section class="privacy-flow" id="privacy">
         <div class="container">
-            <div class="section-header" style="text-align: center;">
+            <div class="section-header reveal" style="text-align: center;">
                 <h2>🔐 Your Privacy, Our Priority</h2>
                 <p>Hover over each step to see why your data stays yours.</p>
             </div>
             <div class="flow-container">
                 <div class="flow-diagram">
-                    <!-- Step 1: Mic -->
-                    <div class="flow-node">
+                    <div class="flow-node reveal">
                         <div class="flow-node-icon">🎤</div>
                         <h3>Your Microphone</h3>
-                        <p>Audio captured locally on your machine. Nothing leaves your computer until encrypted.</p>
+                        <p>Audio captured locally on your machine.</p>
                         <span class="flow-node-badge">✅ 100% Local</span>
                     </div>
-
-                    <!-- Step 2: Encrypted Tunnel -->
-                    <div class="flow-node">
+                    <div class="flow-node reveal reveal-delay-1">
                         <div class="flow-node-icon">🔒</div>
                         <h3>Encrypted Tunnel</h3>
-                        <p>Direct HTTPS connection to your chosen AI provider. No middleman, no proxy servers.</p>
-                        <span class="flow-node-badge">✅ AES-256 Encryption</span>
+                        <p>Direct HTTPS connection. No middleman.</p>
+                        <span class="flow-node-badge">✅ AES-256</span>
                     </div>
-
-                    <!-- Step 3: Your Text -->
-                    <div class="flow-node">
+                    <div class="flow-node reveal reveal-delay-2">
                         <div class="flow-node-icon">📝</div>
                         <h3>Your Text Returns</h3>
-                        <p>Only transcribed text comes back. No audio is stored, logged, or used for training.</p>
-                        <span class="flow-node-badge">✅ Zero Data Retention</span>
+                        <p>Only text comes back. No audio stored.</p>
+                        <span class="flow-node-badge">✅ Zero Retention</span>
                     </div>
-
-                    <div class="flow-arrow flow-arrow-1">→</div>
-                    <div class="flow-arrow flow-arrow-2">→</div>
                 </div>
-
-                <div class="flow-trust-message">
+                <div class="flow-trust-message reveal">
                     <p>🛡️ <span class="highlight">We don't have a database for your audio.</span> Your voice never touches our servers. Period.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- How to Use -->
+    <!-- Auto-Typing Terminal -->
     <section class="how-to-use" id="how-to-use">
         <div class="container">
-            <div class="section-header">
-                <h2>Installation</h2>
-                <p>Get up and running in under 5 minutes.</p>
+            <div class="section-header reveal">
+                <h2>Get up and running in <span class="gradient-text">under 5 minutes</span></h2>
+                <p>Simple installation. Powerful results.</p>
             </div>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <h3>Download & Extract</h3>
-                    <p>Download the project folder and extract it to your desired location.</p>
+            <div class="terminal-window reveal">
+                <div class="terminal-header">
+                    <div class="terminal-dot red"></div>
+                    <div class="terminal-dot yellow"></div>
+                    <div class="terminal-dot green"></div>
+                    <div class="terminal-title">voiceflow — bash — 80x24</div>
                 </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <h3>Open in VS Code</h3>
-                    <p>Open the extracted folder in Visual Studio Code or your preferred editor.</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <h3>Install Dependencies</h3>
-                    <p>Open terminal and run:</p>
-                    <code>pip install -r requirements.txt</code>
-                </div>
-                <div class="step">
-                    <div class="step-number">4</div>
-                    <h3>Install PySide6</h3>
-                    <p>Run the following command:</p>
-                    <code>pip install PySide6</code>
-                </div>
-                <div class="step">
-                    <div class="step-number">5</div>
-                    <h3>Launch the App</h3>
-                    <p>Start the application:</p>
-                    <code>python main.py</code>
-                </div>
-                <div class="step">
-                    <div class="step-number">6</div>
-                    <h3>Add API Keys</h3>
-                    <p>Configure your API keys:</p>
-                    <ul>
-                        <li>DeepSeek AI API</li>
-                        <li>Groq API (free tier available)</li>
-                    </ul>
+                <div class="terminal-body" id="terminalBody">
+                    <!-- Lines will be auto-typed -->
                 </div>
             </div>
         </div>
@@ -1106,47 +1461,44 @@
     <!-- Usage -->
     <section class="usage" id="usage">
         <div class="usage-box">
-            <h3>How to Use</h3>
-            <div class="usage-step">
+            <h3 class="reveal">How to Use</h3>
+            <div class="usage-step reveal reveal-delay-1">
                 <strong>Step 1</strong>
                 <span>Open any application where you want to dictate text</span>
             </div>
-            <div class="usage-step">
+            <div class="usage-step reveal reveal-delay-2">
                 <strong>Step 2</strong>
                 <span>Press and hold <kbd>Ctrl</kbd> + <kbd>Win</kbd></span>
             </div>
-            <div class="usage-step">
+            <div class="usage-step reveal reveal-delay-3">
                 <strong>Step 3</strong>
                 <span>Speak clearly. Your voice is converted to text in real-time.</span>
             </div>
-            <div class="usage-step">
+            <div class="usage-step reveal reveal-delay-4">
                 <strong>Step 4</strong>
                 <span>Release the keys when you're done. Text appears automatically.</span>
             </div>
-            <p style="text-align: center; margin-top: 2rem; color: var(--text-secondary); font-size: 0.95rem;">
-                Works in any text field—even apps without built-in voice support.
-            </p>
         </div>
     </section>
 
     <!-- API Section -->
     <section class="api-section">
         <div class="container">
-            <div class="section-header">
+            <div class="section-header reveal">
                 <h2>API Backends</h2>
                 <p>Choose your preferred AI provider.</p>
             </div>
             <div class="api-grid">
-                <div class="api-card">
-                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🧠</div>
+                <div class="api-card reveal">
+                    <div style="font-size: 2.5rem;">🧠</div>
                     <h3>DeepSeek AI</h3>
-                    <p>High-accuracy transcription with advanced language understanding. Requires API key.</p>
+                    <p>High-accuracy transcription with advanced language understanding.</p>
                 </div>
-                <div class="api-card">
-                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⚡</div>
+                <div class="api-card reveal reveal-delay-1">
+                    <div style="font-size: 2.5rem;">⚡</div>
                     <h3>Groq</h3>
                     <span class="badge">FREE</span>
-                    <p style="margin-top: 1rem;">Lightning-fast inference at no cost. Perfect for getting started without expenses.</p>
+                    <p style="margin-top: 1rem;">Lightning-fast inference at no cost.</p>
                 </div>
             </div>
         </div>
@@ -1154,17 +1506,12 @@
 
     <!-- Download -->
     <section class="download" id="download">
-        <h2>Ready to start?</h2>
-        <p>Download VoiceFlow AI and start dictating today.</p>
-        
-        <div class="download-box">
+        <h2 class="reveal">Ready to start?</h2>
+        <p class="reveal">Download VoiceFlow AI and start dictating today.</p>
+        <div class="download-box reveal reveal-delay-1">
             <h3>Download Project</h3>
             <p>Complete source code with setup instructions</p>
-            <a href="https://drive.google.com/file/d/1Yl_fRZs-Rfs5iJbtYb532XbnHl5lFVIr/view" 
-               class="download-btn" 
-               target="_blank">
-                Download from Google Drive
-            </a>
+            <a href="https://drive.google.com/file/d/1Yl_fRZs-Rfs5iJbtYb532XbnHl5lFVIr/view" class="download-btn" target="_blank">Download from Google Drive</a>
             <div class="download-features">
                 <span>✓ Free & Open Source</span>
                 <span>✓ No Installation</span>
@@ -1173,23 +1520,35 @@
         </div>
     </section>
 
-    <!-- Footer -->
     <footer>
         <p>&copy; 2026 VoiceFlow AI. Open source project.</p>
     </footer>
 
     <script>
+        // ===== SCROLL PROGRESS =====
+        const scrollProgress = document.getElementById('scrollProgress');
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const progress = (scrollTop / scrollHeight) * 100;
+            scrollProgress.style.width = progress + '%';
+        });
+
+        // ===== SPOTLIGHT CURSOR =====
+        const spotlight = document.getElementById('spotlight');
+        document.addEventListener('mousemove', (e) => {
+            spotlight.style.left = e.clientX + 'px';
+            spotlight.style.top = e.clientY + 'px';
+        });
+
         // ===== THEME TOGGLE =====
         const themeToggle = document.getElementById('themeToggle');
         const body = document.body;
-
-        // Load saved theme
         const savedTheme = localStorage.getItem('voiceflow-theme');
         if (savedTheme === 'dark') {
             body.classList.add('dark-mode');
             themeToggle.textContent = '☀️';
         }
-
         themeToggle.addEventListener('click', () => {
             body.classList.toggle('dark-mode');
             const isDark = body.classList.contains('dark-mode');
@@ -1202,13 +1561,95 @@
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                closeCmdk();
             });
         });
 
-        // ===== SPEED RACE GAME =====
+        // ===== SCROLL REVEAL =====
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // Trigger counter animation
+                    if (entry.target.classList.contains('stat-block')) {
+                        animateCounter(entry.target.querySelector('.stat-number'));
+                    }
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // ===== ANIMATED COUNTERS =====
+        function animateCounter(element) {
+            if (!element || element.dataset.animated) return;
+            element.dataset.animated = 'true';
+            const target = parseInt(element.dataset.target);
+            const duration = 2000;
+            const stepTime = 20;
+            const steps = duration / stepTime;
+            const increment = target / steps;
+            let current = 0;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current).toLocaleString() + (target > 1000 ? '+' : target === 99 ? '%' : '');
+            }, stepTime);
+        }
+
+        // ===== AUTO-TYPING TERMINAL =====
+        const terminalBody = document.getElementById('terminalBody');
+        const terminalLines = [
+            { type: 'comment', text: '# Clone VoiceFlow AI repository' },
+            { type: 'command', text: '<span class="terminal-prompt">$</span> <span class="syntax-keyword">git clone</span> https://github.com/voiceflow/ai.git' },
+            { type: 'success', text: 'Cloning into \'ai\'...' },
+            { type: 'command', text: '<span class="terminal-prompt">$</span> <span class="syntax-keyword">cd</span> ai' },
+            { type: 'comment', text: '# Install Python dependencies' },
+            { type: 'command', text: '<span class="terminal-prompt">$</span> <span class="syntax-keyword">pip install</span> <span class="syntax-flag">-r</span> requirements.txt' },
+            { type: 'success', text: '✓ Successfully installed pyside6-6.5.0 pyaudio-0.2.11' },
+            { type: 'comment', text: '# Launch VoiceFlow AI' },
+            { type: 'command', text: '<span class="terminal-prompt">$</span> <span class="syntax-keyword">python</span> main.py' },
+            { type: 'success', text: '🎤 VoiceFlow AI is ready! Press Ctrl+Win to dictate.' }
+        ];
+
+        let terminalStarted = false;
+        const terminalObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !terminalStarted) {
+                    terminalStarted = true;
+                    startTerminal();
+                }
+            });
+        }, { threshold: 0.3 });
+
+        terminalObserver.observe(document.querySelector('.terminal-window'));
+
+        function startTerminal() {
+            let lineIndex = 0;
+            const addLine = () => {
+                if (lineIndex >= terminalLines.length) {
+                    const cursor = document.createElement('span');
+                    cursor.className = 'terminal-cursor';
+                    terminalBody.appendChild(cursor);
+                    return;
+                }
+                const line = terminalLines[lineIndex];
+                const lineEl = document.createElement('div');
+                lineEl.className = 'terminal-line';
+                lineEl.style.animationDelay = '0s';
+                lineEl.innerHTML = `<span class="${line.type === 'comment' ? 'terminal-comment' : ''}">${line.text}</span>`;
+                terminalBody.appendChild(lineEl);
+                lineIndex++;
+                setTimeout(addLine, 400);
+            };
+            addLine();
+        }
+
+        // ===== SPEED RACE =====
         const raceStartBtn = document.getElementById('raceStart');
         const typingText = document.getElementById('typingText');
         const voiceText = document.getElementById('voiceText');
@@ -1220,14 +1661,11 @@
         const sampleText = "VoiceFlow AI is an open-source tool that brings voice typing to any application on your computer. Just speak and watch your words appear instantly.";
 
         let raceRunning = false;
-
         raceStartBtn.addEventListener('click', () => {
             if (raceRunning) return;
             raceRunning = true;
             raceStartBtn.disabled = true;
             raceStartBtn.textContent = '🏃 Racing...';
-
-            // Reset
             typingText.innerHTML = '';
             voiceText.innerHTML = '';
             typingProgress.style.width = '0%';
@@ -1235,10 +1673,9 @@
             raceStats.classList.remove('visible');
 
             const totalChars = sampleText.length;
-            const typingDuration = 12000; // 12 seconds for typing (slow)
-            const voiceDuration = 3000;    // 3 seconds for voice (fast)
+            const typingDuration = 12000;
+            const voiceDuration = 3000;
 
-            // Typing simulation - character by character slowly
             let typingIndex = 0;
             const typingInterval = setInterval(() => {
                 if (typingIndex < totalChars) {
@@ -1253,12 +1690,11 @@
                 }
             }, typingDuration / totalChars);
 
-            // Voice simulation - fast appearance
             let voiceIndex = 0;
             const voiceInterval = setInterval(() => {
                 if (voiceIndex < totalChars) {
                     voiceText.innerHTML = sampleText.substring(0, voiceIndex + 1) + '<span class="cursor"></span>';
-                    voiceIndex += 3; // 3 chars at a time (faster)
+                    voiceIndex += 3;
                     voiceProgress.style.width = (Math.min(voiceIndex / totalChars, 1) * 100) + '%';
                 } else {
                     clearInterval(voiceInterval);
@@ -1279,6 +1715,70 @@
                     }, 500);
                 }
             }
+        });
+
+        // ===== COMMAND PALETTE (Cmd+K) =====
+        const cmdkOverlay = document.getElementById('cmdkOverlay');
+        const cmdkDialog = document.getElementById('cmdkDialog');
+        const cmdkInput = document.getElementById('cmdkInput');
+        const cmdkTrigger = document.getElementById('cmdkTrigger');
+        const cmdkList = document.getElementById('cmdkList');
+        const cmdkItems = Array.from(document.querySelectorAll('.cmdk-item'));
+        let selectedIndex = 0;
+
+        function openCmdk() {
+            cmdkOverlay.classList.add('active');
+            cmdkDialog.classList.add('active');
+            cmdkInput.value = '';
+            cmdkInput.focus();
+            filterItems('');
+        }
+
+        function closeCmdk() {
+            cmdkOverlay.classList.remove('active');
+            cmdkDialog.classList.remove('active');
+        }
+
+        function filterItems(query) {
+            const items = document.querySelectorAll('.cmdk-item');
+            let visibleCount = 0;
+            items.forEach(item => {
+                const title = item.querySelector('.cmdk-item-title').textContent.toLowerCase();
+                const desc = item.querySelector('.cmdk-item-desc').textContent.toLowerCase();
+                if (title.includes(query.toLowerCase()) || desc.includes(query.toLowerCase())) {
+                    item.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function executeAction(action) {
+            closeCmdk();
+            if (action === 'features') document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
+            else if (action === 'download') document.getElementById('download').scrollIntoView({ behavior: 'smooth' });
+            else if (action === 'speed') document.getElementById('speed-race').scrollIntoView({ behavior: 'smooth' });
+            else if (action === 'privacy') document.getElementById('privacy').scrollIntoView({ behavior: 'smooth' });
+            else if (action === 'theme') themeToggle.click();
+            else if (action === 'github') window.open('https://github.com', '_blank');
+        }
+
+        cmdkTrigger.addEventListener('click', openCmdk);
+        cmdkOverlay.addEventListener('click', closeCmdk);
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                openCmdk();
+            }
+            if (e.key === 'Escape') closeCmdk();
+        });
+
+        cmdkInput.addEventListener('input', (e) => filterItems(e.target.value));
+
+        cmdkItems.forEach((item, index) => {
+            item.addEventListener('click', () => executeAction(item.dataset.action));
         });
     </script>
 </body>
